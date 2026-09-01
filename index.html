@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบSMC - YRU</title>
+  <title>ระบบออนไลน์ - SMC YRU</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -32,11 +32,13 @@
         <button onclick="toggleSidebar()" class="text-slate-600 dark:text-slate-300 hover:text-yruPink focus:outline-none p-1">
           <i class="fa-solid fa-bars text-xl"></i>
         </button>
-        <div class="flex items-center gap-2">
+        
+        <!-- Header University Logo Container -->
+        <div id="headerLogoContainer" class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-xs border border-amber-400 shadow-sm">
-            
+            <i class="fa-solid fa-graduation-cap"></i>
           </div>
-          <span class="font-bold text-xl text-yruPink tracking-tight">SMC [YRU]</span>
+          <span class="font-bold text-xl text-yruPink tracking-tight">SMC-YRU</span>
         </div>
       </div>
 
@@ -82,12 +84,15 @@
   <aside id="sidebar" class="fixed top-0 left-0 w-72 h-full bg-white dark:bg-slate-800 z-50 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between overflow-y-auto">
     <div>
       <div class="p-4 flex justify-between items-center border-b border-slate-100 dark:border-slate-700">
-        <div class="flex items-center gap-2">
+        
+        <!-- Sidebar University Logo Container -->
+        <div id="sidebarLogoContainer" class="flex items-center gap-2">
           <div class="w-10 h-10 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-sm border border-amber-400">
-            
+            <i class="fa-solid fa-graduation-cap"></i>
           </div>
-          <span class="font-bold text-2xl text-yruPink tracking-wide">SMC [YRU]</span>
+          <span class="font-bold text-2xl text-yruPink tracking-wide">SMC-YRU</span>
         </div>
+
         <button onclick="toggleSidebar()" class="text-yruPink text-xl hover:text-slate-400 p-1">
           <i class="fa-solid fa-xmark"></i>
         </button>
@@ -107,7 +112,7 @@
 
     <div class="p-4 text-center border-t border-slate-100 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 space-y-1">
       <p class="font-semibold text-slate-700 dark:text-slate-300">กรณีที่พบปัญหาการใช้งาน</p>
-      <p>ติดต่อได้ที่ <span class="text-slate-800 dark:text-slate-200 font-medium">0952200855</span></p>
+      <p>ติดต่อได้ที่ <span class="text-slate-800 dark:text-slate-200 font-medium">095-2200-855</span></p>
     </div>
   </aside>
 
@@ -228,12 +233,16 @@
 
   <script>
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwuwoxbcH8sYL7HjW9fMJrBs-Mmw7YP2JbYrdxl66XyJL28FOiIGaTSXx9QMl54uBimpw/exec"; // <--- เปลี่ยนเป็น Web App URL ของคุณ
+    const LOGO_URL = ""; // <--- ใส่ลิงค์รูปโลโก้มหาวิทยาลัยตรงนี้ (เช่น "https://www.yru.ac.th/logo.png") หากเว้นว่างไว้จะเป็นไอคอนการศึกษาแทน
     const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
+    
     let currentUser = null;
     let currentFilter = "ทั้งหมด";
     let loadedPostsData = [];
 
     window.onload = () => {
+      renderLogos();
+
       const now = new Date();
       document.getElementById("lastUpdateLabel").textContent = "Last Update " + now.toLocaleDateString('th-TH') + " " + now.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'});
 
@@ -243,6 +252,68 @@
         showDashboard();
       }
     };
+
+    // Render University Logos or Fallback to Graduation Cap Icon
+    function renderLogos() {
+      const headerContainer = document.getElementById("headerLogoContainer");
+      const sidebarContainer = document.getElementById("sidebarLogoContainer");
+
+      if (LOGO_URL && LOGO_URL.trim() !== "") {
+        if (headerContainer) {
+          headerContainer.innerHTML = `
+            <img src="${LOGO_URL}" alt="YRU Logo" class="w-8 h-8 object-contain rounded-full border border-amber-400 shadow-sm" onerror="fallbackLogo(this, 'header')" />
+            <span class="font-bold text-xl text-yruPink tracking-tight">YRU</span>
+          `;
+        }
+        if (sidebarContainer) {
+          sidebarContainer.innerHTML = `
+            <img src="${LOGO_URL}" alt="YRU Logo" class="w-10 h-10 object-contain rounded-full border border-amber-400" onerror="fallbackLogo(this, 'sidebar')" />
+            <span class="font-bold text-2xl text-yruPink tracking-wide">YRU</span>
+          `;
+        }
+      } else {
+        showDefaultIconLogo(headerContainer, sidebarContainer);
+      }
+    }
+
+    function fallbackLogo(imgElement, type) {
+      const parent = imgElement.parentElement;
+      if (!parent) return;
+      if (type === 'header') {
+        parent.innerHTML = `
+          <div class="w-8 h-8 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-xs border border-amber-400 shadow-sm">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <span class="font-bold text-xl text-yruPink tracking-tight">YRU</span>
+        `;
+      } else {
+        parent.innerHTML = `
+          <div class="w-10 h-10 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-sm border border-amber-400">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <span class="font-bold text-2xl text-yruPink tracking-wide">YRU</span>
+        `;
+      }
+    }
+
+    function showDefaultIconLogo(headerContainer, sidebarContainer) {
+      if (headerContainer) {
+        headerContainer.innerHTML = `
+          <div class="w-8 h-8 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-xs border border-amber-400 shadow-sm">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <span class="font-bold text-xl text-yruPink tracking-tight">YRU</span>
+        `;
+      }
+      if (sidebarContainer) {
+        sidebarContainer.innerHTML = `
+          <div class="w-10 h-10 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-sm border border-amber-400">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <span class="font-bold text-2xl text-yruPink tracking-wide">YRU</span>
+        `;
+      }
+    }
 
     // UI Helpers
     function toggleSidebar() {
