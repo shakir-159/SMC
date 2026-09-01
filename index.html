@@ -28,7 +28,7 @@
     <div class="max-w-4xl mx-auto flex justify-between items-center">
       
       <div class="flex items-center gap-3">
-        <button onclick="toggleSidebar()" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 focus:outline-none p-1">
+        <button onclick="toggleSidebar()" class="text-slate-600 dark:text-slate-300 hover:text-yruPink focus:outline-none p-1">
           <i class="fa-solid fa-bars text-xl"></i>
         </button>
         <div class="flex items-center gap-2">
@@ -39,7 +39,7 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 md:gap-3">
         
         <button onclick="toggleDarkMode()" class="p-2 text-slate-500 dark:text-amber-400 hover:text-yruPink focus:outline-none">
           <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
@@ -65,13 +65,18 @@
             เข้าสู่ระบบ
           </button>
         </div>
+
+        <button id="navLogoutBtn" onclick="logout()" class="hidden p-2 text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-700 rounded-full transition focus:outline-none" title="ออกจากระบบ">
+          <i class="fa-solid fa-right-from-bracket text-lg"></i>
+        </button>
+
       </div>
 
     </div>
   </header>
 
   <div id="sidebarBackdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/40 z-40 hidden transition-opacity"></div>
-  <aside id="sidebar" class="fixed top-0 left-0 w-72 h-full bg-white dark:bg-slate-800 z-50 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between">
+  <aside id="sidebar" class="fixed top-0 left-0 w-72 h-full bg-white dark:bg-slate-800 z-50 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between overflow-y-auto">
     <div>
       <div class="p-4 flex justify-between items-center border-b border-slate-100 dark:border-slate-700">
         <div class="flex items-center gap-2">
@@ -86,9 +91,14 @@
       </div>
 
       <nav class="p-3 space-y-1">
-        <a href="#" onclick="toggleSidebar()" class="flex items-center gap-3 px-4 py-2.5 text-slate-600 dark:text-slate-300 hover:text-yruPink hover:bg-pink-50 dark:hover:bg-slate-700 rounded-lg text-sm font-medium transition">
+        <a href="#" onclick="toggleSidebar()" class="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-200 hover:text-yruPink hover:bg-pink-50 dark:hover:bg-slate-700 rounded-lg text-sm font-bold transition">
           <i class="fa-solid fa-house text-yruPink w-5"></i> หน้าแรก
         </a>
+
+        <div class="pt-3 border-t border-slate-100 dark:border-slate-700">
+          <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">เมนูบริการตามสิทธิ์</p>
+          <div id="sidebarUserMenus" class="space-y-1"></div>
+        </div>
       </nav>
     </div>
 
@@ -150,21 +160,20 @@
           <button onclick="submitNotification()" class="bg-yruPink hover:bg-yruPinkHover text-white text-xs font-bold px-4 py-2 rounded-md shadow-sm">ส่งการแจ้งเตือน</button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex justify-between items-center">
-            <div>
-              <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">จัดการข้อมูลผู้ใช้งาน (Users)</h3>
-              <p class="text-xs text-slate-400 mt-1">เพิ่ม/แก้ไข/ลบ ข้อมูลสิทธิ์ผู้ใช้งาน</p>
-            </div>
-            <button onclick="openUsersCRUDModal()" class="bg-yruPink text-white text-xs font-bold px-3 py-2 rounded-lg hover:bg-yruPinkHover">จัดการตาราง</button>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 text-center space-y-2">
+            <h3 class="font-bold text-xs text-slate-800 dark:text-slate-100">จัดการผู้ใช้งาน (Users)</h3>
+            <button onclick="openUsersCRUDModal()" class="w-full bg-yruPink text-white text-xs font-bold py-2 rounded-lg hover:bg-yruPinkHover">เปิดตาราง</button>
           </div>
 
-          <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex justify-between items-center">
-            <div>
-              <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">จัดการรายการเมนู (Menus)</h3>
-              <p class="text-xs text-slate-400 mt-1">ตั้งค่าลิงก์ สิทธิ์ และรูปแบบการเปิดหน้าเว็บ</p>
-            </div>
-            <button onclick="openMenusCRUDModal()" class="bg-yruPink text-white text-xs font-bold px-3 py-2 rounded-lg hover:bg-yruPinkHover">จัดการตาราง</button>
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 text-center space-y-2">
+            <h3 class="font-bold text-xs text-slate-800 dark:text-slate-100">จัดการเมนูระบบ (Menus)</h3>
+            <button onclick="openMenusCRUDModal()" class="w-full bg-yruPink text-white text-xs font-bold py-2 rounded-lg hover:bg-yruPinkHover">เปิดตาราง</button>
+          </div>
+
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 text-center space-y-2">
+            <h3 class="font-bold text-xs text-slate-800 dark:text-slate-100">ตรวจสอบโพสต์ (Posts)</h3>
+            <button onclick="openPostsAuditModal()" class="w-full bg-yruPink text-white text-xs font-bold py-2 rounded-lg hover:bg-yruPinkHover">เปิดตาราง</button>
           </div>
         </div>
 
@@ -210,9 +219,9 @@
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwuwoxbcH8sYL7HjW9fMJrBs-Mmw7YP2JbYrdxl66XyJL28FOiIGaTSXx9QMl54uBimpw/exec"; // <--- เปลี่ยนเป็น URL Web App ของคุณ
     let currentUser = null;
     let currentFilter = "ทั้งหมด";
+    let loadedPostsData = [];
 
     window.onload = () => {
-      // Dynamic Last Update Time
       const now = new Date();
       document.getElementById("lastUpdateLabel").textContent = "Last Update " + now.toLocaleDateString('th-TH') + " " + now.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'});
 
@@ -223,7 +232,7 @@
       }
     };
 
-    // UI Controllers
+    // UI Helpers
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('-translate-x-full');
       document.getElementById('sidebarBackdrop').classList.toggle('hidden');
@@ -246,10 +255,8 @@
     }
 
     function toggleMenuDrawer() {
-      const content = document.getElementById("menuDrawerContent");
-      const icon = document.getElementById("menuDrawerIcon");
-      content.classList.toggle("hidden");
-      icon.classList.toggle("rotate-180");
+      document.getElementById("menuDrawerContent").classList.toggle("hidden");
+      document.getElementById("menuDrawerIcon").classList.toggle("rotate-180");
     }
 
     function toggleTargetInput() {
@@ -257,7 +264,7 @@
       document.getElementById('targetValueBox').classList.toggle('hidden', type === 'ALL');
     }
 
-    // Login & Profile Modal
+    // Login & User Profile
     async function handleLogin() {
       const userId = document.getElementById("loginUserId").value.trim();
       const fullName = document.getElementById("loginFullName").value.trim();
@@ -284,6 +291,7 @@
       document.getElementById("loginView").classList.add("hidden");
       document.getElementById("dashboardView").classList.remove("hidden");
       document.getElementById("notiBellContainer").classList.remove("hidden");
+      document.getElementById("navLogoutBtn").classList.remove("hidden");
 
       renderUserHeader();
 
@@ -306,7 +314,7 @@
       `;
     }
 
-    // Modal แก้ไขโปรไฟล์ส่วนตัว
+    // Modal แก้ไขข้อมูลส่วนตัว (นำปุ่ม logout ออกแล้ว)
     function openUserProfileModal() {
       const avatarSrc = currentUser.avatar || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
       Swal.fire({
@@ -334,7 +342,7 @@
         showCancelButton: true,
         confirmButtonText: "บันทึกรูปโปรไฟล์",
         confirmButtonColor: "#E66695",
-        cancelButtonText: "ออกจากระบบ",
+        cancelButtonText: "ปิด",
         cancelButtonColor: "#64748b",
         preConfirm: async () => {
           const fileInput = document.getElementById("editAvatarFile").files[0];
@@ -364,17 +372,13 @@
             renderUserHeader();
           }
         }
-      }).then((result) => {
-        if (result.dismiss === Swal.DismissReason.cancel) {
-          logout();
-        }
       });
     }
 
-    // Dynamic Menus & Modal Pop-up Full Screen
+    // Load Dynamic Menus in Grid and Sidebar Drawer
     async function loadMenus() {
       const grid = document.getElementById("dynamicMenuGrid");
-      grid.innerHTML = "<p class='text-xs text-slate-400 col-span-full'>กำลังโหลดเมนู...</p>";
+      const sidebarNav = document.getElementById("sidebarUserMenus");
 
       const res = await fetch(GAS_API_URL, {
         method: "POST",
@@ -383,6 +387,7 @@
       const data = await res.json();
 
       if (data.success && data.menus.length > 0) {
+        // 1. Grid rendering
         grid.innerHTML = data.menus.map(menu => {
           let link = menu.url;
           if (!menu.isDirect) {
@@ -410,8 +415,33 @@
             `;
           }
         }).join('');
+
+        // 2. Sidebar links rendering
+        sidebarNav.innerHTML = data.menus.map(menu => {
+          let link = menu.url;
+          if (!menu.isDirect) {
+            const sep = link.includes('?') ? '&' : '?';
+            link += `${sep}id=${encodeURIComponent(currentUser.id)}`;
+          }
+
+          if (menu.openMode === "MODAL") {
+            return `
+              <button onclick="toggleSidebar(); openMenuModal('${menu.name}', '${link}')" class="w-full flex items-center gap-3 px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-yruPink hover:bg-pink-50 dark:hover:bg-slate-700 rounded-lg text-xs font-medium transition text-left">
+                <i class="${menu.icon || 'fa-solid fa-link'} text-yruPink w-4"></i> ${menu.name}
+              </button>
+            `;
+          } else {
+            return `
+              <a href="${link}" target="_blank" onclick="toggleSidebar()" class="flex items-center gap-3 px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-yruPink hover:bg-pink-50 dark:hover:bg-slate-700 rounded-lg text-xs font-medium transition">
+                <i class="${menu.icon || 'fa-solid fa-link'} text-yruPink w-4"></i> ${menu.name}
+              </a>
+            `;
+          }
+        }).join('');
+
       } else {
         grid.innerHTML = "<p class='text-xs text-slate-400 col-span-full'>ไม่มีเมนูสำหรับสิทธิ์ของคุณ</p>";
+        sidebarNav.innerHTML = "<p class='text-xs text-slate-400 px-4'>ไม่มีเมนู</p>";
       }
     }
 
@@ -426,66 +456,171 @@
       });
     }
 
-    // Notifications Full Modal
-    async function loadNotifications() {
+    // Posts, Smooth Likes & Smooth Comments
+    async function loadPosts() {
+      const feed = document.getElementById("newsFeed");
+      if (loadedPostsData.length === 0) {
+        feed.innerHTML = "<p class='text-xs text-slate-400 text-center py-4'>กำลังโหลดข่าวสาร...</p>";
+      }
+
       const res = await fetch(GAS_API_URL, {
         method: "POST",
-        body: JSON.stringify({ action: "getUserNotifications", userId: currentUser.id, userRole: currentUser.role })
+        body: JSON.stringify({ action: "getPosts", categoryFilter: currentFilter })
       });
       const data = await res.json();
 
       if (data.success) {
-        const badge = document.getElementById("notiBadge");
-        if (data.unreadCount > 0) {
-          badge.textContent = data.unreadCount > 99 ? '99+' : data.unreadCount;
-          badge.classList.remove("hidden");
-        } else {
-          badge.classList.add("hidden");
-        }
-
-        const list = document.getElementById("notiList");
-        if (data.notifications.length === 0) {
-          list.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">ไม่มีการแจ้งเตือน</p>`;
-        } else {
-          list.innerHTML = data.notifications.map(item => `
-            <div onclick="openNotiFullModal('${item.notiId}', '${encodeURIComponent(item.title)}', '${encodeURIComponent(item.message)}', '${item.createdAt}', ${item.isRead})" class="p-3 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition flex items-start gap-2.5 ${item.isRead ? 'opacity-50' : 'bg-pink-50/40'}">
-              <span class="w-2 h-2 rounded-full mt-1.5 inline-block ${item.isRead ? 'bg-transparent' : 'bg-yruPink'}"></span>
-              <div class="flex-1">
-                <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100">${item.title}</h4>
-                <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5 line-clamp-1">${item.message}</p>
-                <span class="text-[10px] text-slate-400 mt-1 block">${item.createdAt}</span>
-              </div>
-            </div>
-          `).join('');
-        }
+        loadedPostsData = data.posts;
+        renderPostsFeed();
       }
     }
 
-    function openNotiFullModal(notiId, encTitle, encMessage, time, isRead) {
-      const title = decodeURIComponent(encTitle);
-      const message = decodeURIComponent(encMessage);
-
-      if (!isRead) {
-        fetch(GAS_API_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "markNotiAsRead", userId: currentUser.id, notiId })
-        }).then(() => loadNotifications());
+    function renderPostsFeed() {
+      const feed = document.getElementById("newsFeed");
+      if (loadedPostsData.length === 0) {
+        feed.innerHTML = "<p class='text-xs text-slate-400 text-center py-4'>ไม่พบข่าวสาร</p>";
+        return;
       }
 
-      Swal.fire({
-        title: `<span class="text-yruPink font-bold text-base">${title}</span>`,
-        html: `
-          <div class="text-left text-xs space-y-3">
-            <p class="text-slate-400 text-[10px]">เวลาสปูล: ${time}</p>
-            <div class="p-3 bg-slate-50 dark:bg-slate-700 rounded-lg text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed">${message}</div>
+      feed.innerHTML = loadedPostsData.map(post => {
+        const isLiked = post.likes.includes(currentUser.id);
+        const isOwnerOrAdmin = post.userId == currentUser.id || currentUser.role === 'ADMIN';
+
+        return `
+          <div id="postCard_${post.postId}" class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-circle-user text-yruPink text-base"></i>${post.authorName}
+              </span>
+              <div class="flex items-center gap-2">
+                <span class="bg-pink-100 text-yruPink text-[10px] px-2.5 py-0.5 rounded-full font-bold">${post.category}</span>
+                ${isOwnerOrAdmin ? `
+                  <button onclick="editPostModal('${post.postId}')" class="text-xs text-slate-400 hover:text-yruPink"><i class="fa-solid fa-pen-to-square"></i></button>
+                  <button onclick="deletePostConfirm('${post.postId}')" class="text-xs text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
+                ` : ''}
+              </div>
+            </div>
+            <p class="text-[10px] text-slate-400">${post.createdAt}</p>
+            <p class="text-xs text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed">${post.content}</p>
+            ${post.imageUrl ? `<img src="${post.imageUrl}" class="w-full h-auto rounded-xl border max-h-80 object-cover" />` : ''}
+            
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
+              <button onclick="smoothToggleLike('${post.postId}')" class="flex items-center gap-1.5 ${isLiked ? 'text-rose-500 font-bold' : 'hover:text-rose-500'} transition">
+                <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                <span id="likeCount_${post.postId}">${post.likes.length} ถูกใจ</span>
+              </button>
+              <span class="text-slate-400" id="commentCount_${post.postId}">${post.comments.length} ความคิดเห็น</span>
+            </div>
+
+            <div id="commentsContainer_${post.postId}" class="space-y-1.5 pt-2 ${post.comments.length > 0 ? '' : 'hidden'}">
+              ${renderCommentsList(post)}
+            </div>
+
+            <div class="flex gap-2 pt-1">
+              <input type="text" id="commentInput_${post.postId}" class="flex-1 p-1.5 text-xs border dark:bg-slate-700 dark:border-slate-600 rounded-lg focus:outline-none focus:border-yruPink" placeholder="เขียนความคิดเห็น...">
+              <button onclick="smoothSubmitComment('${post.postId}')" class="bg-yruPink hover:bg-yruPinkHover text-white text-xs px-3 py-1.5 rounded-lg font-bold transition">ส่ง</button>
+            </div>
           </div>
-        `,
-        confirmButtonText: "ปิดหน้าต่าง",
-        confirmButtonColor: "#E66695"
+        `;
+      }).join('');
+    }
+
+    function renderCommentsList(post) {
+      return post.comments.map(c => {
+        const canDelete = c.userId == currentUser.id || currentUser.role === 'ADMIN';
+        return `
+          <div class="text-[11px] bg-slate-50 dark:bg-slate-700/50 p-2 rounded-lg flex justify-between items-start">
+            <div>
+              <strong class="text-yruPink">${c.authorName}:</strong> 
+              <span class="text-slate-600 dark:text-slate-300">${c.text}</span>
+              <span class="text-[9px] text-slate-400 block mt-0.5">${c.time}</span>
+            </div>
+            ${canDelete ? `
+              <button onclick="smoothDeleteComment('${post.postId}', '${c.commentId}')" class="text-slate-400 hover:text-rose-500 ml-2">
+                <i class="fa-solid fa-xmark text-xs"></i>
+              </button>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Smooth Like (No Refresh)
+    async function smoothToggleLike(postId) {
+      const post = loadedPostsData.find(p => p.postId === postId);
+      if (!post) return;
+
+      const idx = post.likes.indexOf(currentUser.id);
+      if (idx > -1) post.likes.splice(idx, 1);
+      else post.likes.push(currentUser.id);
+
+      // UI Instant Update
+      const countLabel = document.getElementById(`likeCount_${postId}`);
+      if (countLabel) countLabel.textContent = `${post.likes.length} ถูกใจ`;
+      
+      const btn = countLabel.parentElement;
+      const isLiked = post.likes.includes(currentUser.id);
+      btn.className = `flex items-center gap-1.5 ${isLiked ? 'text-rose-500 font-bold' : 'hover:text-rose-500'} transition`;
+      btn.querySelector('i').className = `${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart`;
+
+      // API Sync Background
+      fetch(GAS_API_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "toggleLike", postId, userId: currentUser.id })
       });
     }
 
-    // Posts, Likes & Comments
+    // Smooth Comment Add (No Refresh)
+    async function smoothSubmitComment(postId) {
+      const input = document.getElementById(`commentInput_${postId}`);
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = ""; // Clear input immediately
+
+      const post = loadedPostsData.find(p => p.postId === postId);
+      const res = await fetch(GAS_API_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "addComment",
+          postId, commentText: text,
+          userId: currentUser.id, authorName: currentUser.name
+        })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        post.comments = data.comments;
+        const container = document.getElementById(`commentsContainer_${postId}`);
+        container.classList.remove('hidden');
+        container.innerHTML = renderCommentsList(post);
+        document.getElementById(`commentCount_${postId}`).textContent = `${post.comments.length} ความคิดเห็น`;
+      }
+    }
+
+    // Smooth Comment Delete (No Refresh)
+    async function smoothDeleteComment(postId, commentId) {
+      const post = loadedPostsData.find(p => p.postId === postId);
+      const res = await fetch(GAS_API_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "deleteComment",
+          postId, commentId,
+          userId: currentUser.id, userRole: currentUser.role
+        })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        post.comments = data.comments;
+        const container = document.getElementById(`commentsContainer_${postId}`);
+        if (post.comments.length === 0) container.classList.add('hidden');
+        container.innerHTML = renderCommentsList(post);
+        document.getElementById(`commentCount_${postId}`).textContent = `${post.comments.length} ความคิดเห็น`;
+      }
+    }
+
+    // Create / Edit / Delete Post
     function openCreatePostModal() {
       Swal.fire({
         title: "สร้างโพสต์ข่าวสาร",
@@ -504,10 +639,6 @@
               <label class="block font-semibold mb-1">แนบรูปภาพ</label>
               <input type="file" id="modalPostImage" accept="image/*" class="w-full">
             </div>
-            <div>
-              <label class="block font-semibold mb-1">ลิงก์แนบ (ถ้ามี)</label>
-              <input type="url" id="modalPostAttachment" class="w-full p-2 border rounded" placeholder="https://...">
-            </div>
           </div>
         `,
         showCancelButton: true,
@@ -518,7 +649,6 @@
           if (!content) return Swal.showValidationMessage("กรุณากรอกข้อความ");
 
           const category = document.getElementById("modalPostCategory").value;
-          const attachmentUrl = document.getElementById("modalPostAttachment").value.trim();
           const imageFile = document.getElementById("modalPostImage").files[0];
 
           let imageBase64 = "", imageName = "";
@@ -538,93 +668,105 @@
               action: "createPost",
               userId: currentUser.id,
               authorName: currentUser.name,
-              content, category, attachmentUrl, imageBase64, imageName
+              content, category, imageBase64, imageName
             })
           });
         }
       }).then((res) => { if (res.isConfirmed) loadPosts(); });
     }
 
-    async function loadPosts() {
-      const feed = document.getElementById("newsFeed");
-      feed.innerHTML = "<p class='text-xs text-slate-400 text-center py-4'>กำลังโหลดข่าวสาร...</p>";
+    function editPostModal(postId) {
+      const post = loadedPostsData.find(p => p.postId === postId);
+      if (!post) return;
 
-      const res = await fetch(GAS_API_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "getPosts", categoryFilter: currentFilter })
-      });
-      const data = await res.json();
+      Swal.fire({
+        title: "แก้ไขโพสต์",
+        html: `
+          <div class="space-y-3 text-left text-xs">
+            <textarea id="editPostContent" rows="3" class="w-full p-2 border rounded">${post.content}</textarea>
+            <select id="editPostCategory" class="w-full p-2 border rounded">
+              <option value="ทั่วไป" ${post.category==='ทั่วไป'?'selected':''}>ทั่วไป</option>
+              <option value="ข่าวประกาศ" ${post.category==='ข่าวประกาศ'?'selected':''}>ข่าวประกาศ</option>
+              <option value="กิจกรรม" ${post.category==='กิจกรรม'?'selected':''}>กิจกรรม</option>
+            </select>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: "บันทึก",
+        confirmButtonColor: "#E66695",
+        preConfirm: async () => {
+          const content = document.getElementById("editPostContent").value.trim();
+          const category = document.getElementById("editPostCategory").value;
 
-      if (data.success && data.posts.length > 0) {
-        feed.innerHTML = data.posts.map(post => {
-          const isLiked = post.likes.includes(currentUser.id);
-          return `
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
-              <div class="flex justify-between items-center">
-                <span class="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
-                  <i class="fa-solid fa-circle-user text-yruPink text-base"></i>${post.authorName}
-                </span>
-                <span class="bg-pink-100 text-yruPink text-[10px] px-2.5 py-0.5 rounded-full font-bold">${post.category}</span>
-              </div>
-              <p class="text-[10px] text-slate-400">${post.createdAt}</p>
-              <p class="text-xs text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed">${post.content}</p>
-              ${post.imageUrl ? `<img src="${post.imageUrl}" class="w-full h-auto rounded-xl border max-h-80 object-cover" />` : ''}
-              
-              <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
-                <button onclick="toggleLike('${post.postId}')" class="flex items-center gap-1.5 ${isLiked ? 'text-rose-500 font-bold' : 'hover:text-rose-500'}">
-                  <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
-                  <span>${post.likes.length} ถูกใจ</span>
-                </button>
-                <span class="text-slate-400">${post.comments.length} ความคิดเห็น</span>
-              </div>
+          await fetch(GAS_API_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              action: "updatePost",
+              postId, content, category,
+              userId: currentUser.id, userRole: currentUser.role
+            })
+          });
+        }
+      }).then((res) => { if (res.isConfirmed) loadPosts(); });
+    }
 
-              ${post.comments.length > 0 ? `
-                <div class="space-y-1.5 pt-2 bg-slate-50 dark:bg-slate-700/40 p-2.5 rounded-lg">
-                  ${post.comments.map(c => `
-                    <div class="text-[11px]">
-                      <strong class="text-yruPink">${c.authorName}:</strong> <span class="text-slate-600 dark:text-slate-300">${c.text}</span>
-                    </div>
-                  `).join('')}
-                </div>
-              ` : ''}
-
-              <div class="flex gap-2">
-                <input type="text" id="commentInput_${post.postId}" class="flex-1 p-1.5 text-xs border dark:bg-slate-700 dark:border-slate-600 rounded-lg" placeholder="เขียนความคิดเห็น...">
-                <button onclick="submitComment('${post.postId}')" class="bg-yruPink text-white text-xs px-3 py-1.5 rounded-lg font-bold">ส่ง</button>
-              </div>
-            </div>
-          `;
-        }).join('');
-      } else {
-        feed.innerHTML = "<p class='text-xs text-slate-400 text-center py-4'>ไม่พบข่าวสาร</p>";
+    async function deletePostConfirm(postId) {
+      if (confirm("คุณต้องการลบโพสต์นี้ใช่หรือไม่?")) {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "deletePost", postId, userId: currentUser.id, userRole: currentUser.role })
+        });
+        loadPosts();
       }
     }
 
-    async function toggleLike(postId) {
-      await fetch(GAS_API_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "toggleLike", postId, userId: currentUser.id })
+    // ADMIN POSTS AUDIT MODAL
+    async function openPostsAuditModal() {
+      Swal.showLoading();
+      const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getPosts", categoryFilter: "ทั้งหมด" }) });
+      const data = await res.json();
+      Swal.close();
+
+      const rowsHtml = data.posts.map(p => `
+        <tr class="border-b text-xs text-left">
+          <td class="p-2 font-bold">${p.authorName}</td>
+          <td class="p-2 max-w-xs truncate">${p.content}</td>
+          <td class="p-2"><span class="bg-pink-100 text-yruPink px-2 py-0.5 rounded">${p.category}</span></td>
+          <td class="p-2">${p.createdAt}</td>
+          <td class="p-2">
+            <button onclick="adminDeletePost('${p.postId}')" class="text-rose-500 font-bold">ลบโพสต์</button>
+          </td>
+        </tr>
+      `).join('');
+
+      Swal.fire({
+        title: "ตารางตรวจสอบและลบโพสต์",
+        html: `
+          <div class="max-h-80 overflow-y-auto">
+            <table class="w-full">
+              <thead><tr class="bg-slate-100 text-xs text-left"><th class="p-2">ผู้โพสต์</th><th class="p-2">ข้อความ</th><th class="p-2">หมวดหมู่</th><th class="p-2">เวลา</th><th class="p-2">จัดการ</th></tr></thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
+          </div>
+        `,
+        width: '85%',
+        showConfirmButton: false,
+        showCloseButton: true
       });
-      loadPosts();
     }
 
-    async function submitComment(postId) {
-      const input = document.getElementById(`commentInput_${postId}`);
-      const text = input.value.trim();
-      if (!text) return;
-
-      await fetch(GAS_API_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          action: "addComment",
-          postId, commentText: text,
-          authorName: currentUser.name, avatar: currentUser.avatar
-        })
-      });
-      loadPosts();
+    async function adminDeletePost(postId) {
+      if (confirm("แอดมินยืนยันการลบโพสต์นี้หรือไม่?")) {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "deletePost", postId, userId: currentUser.id, userRole: currentUser.role })
+        });
+        openPostsAuditModal();
+        loadPosts();
+      }
     }
 
-    // ADMIN CRUD MODALS
+    // ADMIN USER & MENU MODALS
     async function openUsersCRUDModal() {
       Swal.showLoading();
       const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getUsersList" }) });
@@ -781,7 +923,65 @@
       }
     }
 
-    // Admin Notification submit
+    // Notifications
+    async function loadNotifications() {
+      const res = await fetch(GAS_API_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "getUserNotifications", userId: currentUser.id, userRole: currentUser.role })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        const badge = document.getElementById("notiBadge");
+        if (data.unreadCount > 0) {
+          badge.textContent = data.unreadCount > 99 ? '99+' : data.unreadCount;
+          badge.classList.remove("hidden");
+        } else {
+          badge.classList.add("hidden");
+        }
+
+        const list = document.getElementById("notiList");
+        if (data.notifications.length === 0) {
+          list.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">ไม่มีการแจ้งเตือน</p>`;
+        } else {
+          list.innerHTML = data.notifications.map(item => `
+            <div onclick="openNotiFullModal('${item.notiId}', '${encodeURIComponent(item.title)}', '${encodeURIComponent(item.message)}', '${item.createdAt}', ${item.isRead})" class="p-3 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition flex items-start gap-2.5 ${item.isRead ? 'opacity-50' : 'bg-pink-50/40'}">
+              <span class="w-2 h-2 rounded-full mt-1.5 inline-block ${item.isRead ? 'bg-transparent' : 'bg-yruPink'}"></span>
+              <div class="flex-1">
+                <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100">${item.title}</h4>
+                <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5 line-clamp-1">${item.message}</p>
+                <span class="text-[10px] text-slate-400 mt-1 block">${item.createdAt}</span>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+    }
+
+    function openNotiFullModal(notiId, encTitle, encMessage, time, isRead) {
+      const title = decodeURIComponent(encTitle);
+      const message = decodeURIComponent(encMessage);
+
+      if (!isRead) {
+        fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "markNotiAsRead", userId: currentUser.id, notiId })
+        }).then(() => loadNotifications());
+      }
+
+      Swal.fire({
+        title: `<span class="text-yruPink font-bold text-base">${title}</span>`,
+        html: `
+          <div class="text-left text-xs space-y-3">
+            <p class="text-slate-400 text-[10px]">เวลาส่ง: ${time}</p>
+            <div class="p-3 bg-slate-50 dark:bg-slate-700 rounded-lg text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed">${message}</div>
+          </div>
+        `,
+        confirmButtonText: "ปิดหน้าต่าง",
+        confirmButtonColor: "#E66695"
+      });
+    }
+
     async function submitNotification() {
       const targetType = document.getElementById("sendTargetType").value;
       const targetValue = document.getElementById("sendTargetValue").value.trim();
