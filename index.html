@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ระบบข่าวสารและบริการนักเรียน/ครู</title>
   
+  <!-- Tailwind CSS & Font Awesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -23,6 +24,7 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sarabun min-h-screen flex flex-col transition-colors duration-200">
 
+  <!-- Header Navbar -->
   <header class="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-40 border-b border-slate-100 dark:border-slate-700">
     <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -51,6 +53,7 @@
     </div>
   </header>
 
+  <!-- Sidebar Overlay & Menu -->
   <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/40 z-50 hidden opacity-0 transition-opacity"></div>
   <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-white dark:bg-slate-800 shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 flex flex-col">
     <div class="p-4 border-b dark:border-slate-700 flex justify-between items-center bg-yruPink text-white">
@@ -58,11 +61,14 @@
       <button onclick="toggleSidebar()" class="text-white hover:text-slate-200"><i class="fa-solid fa-xmark text-xl"></i></button>
     </div>
     <div id="sidebarMenuContainer" class="flex-1 overflow-y-auto p-3 space-y-1">
-      </div>
+      <!-- Dynamic Menus -->
+    </div>
   </aside>
 
+  <!-- Main Content Area -->
   <main class="flex-1 max-w-4xl w-full mx-auto p-4 space-y-4">
     
+    <!-- Post Creation Trigger Bar -->
     <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
       <img id="createPostAvatar" src="https://via.placeholder.com/150" class="w-10 h-10 rounded-full object-cover border border-yruPink" />
       <button onclick="openCreatePostModal()" class="flex-1 text-left bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 dark:text-slate-400 rounded-full px-4 py-2.5 text-xs">
@@ -70,6 +76,7 @@
       </button>
     </div>
 
+    <!-- Category Filter Bar -->
     <div class="flex gap-2 overflow-x-auto pb-2 text-xs scrollbar-none" id="categoryFilterContainer">
       <button onclick="filterCategory('ทั้งหมด')" class="cat-btn active bg-yruPink text-white px-4 py-1.5 rounded-full font-semibold shadow-sm">ทั้งหมด</button>
       <button onclick="filterCategory('ทั่วไป')" class="cat-btn bg-white dark:bg-slate-800 border dark:border-slate-700 px-4 py-1.5 rounded-full hover:bg-slate-100">ทั่วไป</button>
@@ -77,11 +84,13 @@
       <button onclick="filterCategory('กิจกรรม')" class="cat-btn bg-white dark:bg-slate-800 border dark:border-slate-700 px-4 py-1.5 rounded-full hover:bg-slate-100">กิจกรรม</button>
     </div>
 
+    <!-- News Feed Posts Container -->
     <div id="postsFeedContainer" class="space-y-4">
       <div class="text-center py-10 text-slate-400"><i class="fa-solid fa-spinner fa-spin text-2xl"></i><p class="mt-2 text-xs">กำลังโหลดข่าวสาร...</p></div>
     </div>
   </main>
 
+  <!-- JavaScript App Logic -->
   <script>
     // ==========================================
     // CONFIGURATION
@@ -162,7 +171,7 @@
       document.getElementById("navUserName").textContent = currentUser.name;
     }
 
-    // Modal แก้ไขข้อมูลส่วนตัว (เปิดให้แก้ ชื่อ-สกุล และ เบอร์โทรศัพท์)
+    // Modal แก้ไขข้อมูลส่วนตัว
     function openUserProfileModal() {
       const avatarSrc = currentUser.avatar || DEFAULT_AVATAR;
       Swal.fire({
@@ -323,6 +332,7 @@
 
         return `
           <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 space-y-3">
+            <!-- Author Header -->
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2.5">
                 <img src="${authorAvatar}" class="w-9 h-9 rounded-full object-cover border border-yruPink" />
@@ -339,9 +349,11 @@
               ` : ''}
             </div>
 
+            <!-- Content -->
             <p class="text-xs leading-relaxed whitespace-pre-line">${formatTextWithLinks(post.content)}</p>
             ${post.imageUrl ? `<img src="${post.imageUrl}" onclick="openImageModal('${post.imageUrl}')" class="w-full max-h-80 object-cover rounded-lg border cursor-pointer hover:opacity-95 transition" />` : ''}
 
+            <!-- Post Actions -->
             <div class="flex items-center justify-between text-xs pt-2 border-t dark:border-slate-700/50 text-slate-500">
               <button onclick="toggleLikePost('${post.postId}')" class="flex items-center gap-1.5 ${isLiked ? 'text-rose-500 font-bold' : 'hover:text-rose-500'}">
                 <i class="fa-${isLiked ? 'solid' : 'regular'} fa-heart text-sm"></i>
@@ -350,11 +362,13 @@
               <span id="commentCount_${post.postId}" class="text-[11px] text-slate-400">${(post.comments || []).length} ความคิดเห็น</span>
             </div>
 
+            <!-- Comment Input -->
             <div class="pt-2 flex gap-2 items-center">
               <input type="text" id="commentInput_${post.postId}" class="flex-1 p-2 text-xs border rounded-full focus:outline-none focus:border-yruPink dark:bg-slate-700/50 dark:border-slate-600" placeholder="เขียนความคิดเห็น...">
               <button onclick="smoothSubmitComment('${post.postId}')" class="bg-yruPink text-white px-3 py-1.5 rounded-full text-xs font-bold hover:bg-yruPink/90">ส่ง</button>
             </div>
 
+            <!-- Comments Tree -->
             <div id="commentsContainer_${post.postId}" class="space-y-2 pt-2">
               ${renderCommentsTree(post)}
             </div>
@@ -363,7 +377,7 @@
       }).join('');
     }
 
-    // Facebook-style Comment Tree Render (ไอคอนถังขยะ + ไอคอนดินสอ)
+    // Comment Tree Render (รวมฟีเจอร์ถังขยะ + ปุ่มดินสอแก้ไขความคิดเห็น)
     function renderCommentsTree(post, parentId = null) {
       const comments = (post.comments || []).filter(c => (c.parentId || null) === parentId);
       if (comments.length === 0) return '';
@@ -383,6 +397,7 @@
                 ${c.imageUrl ? `<img src="${c.imageUrl}" onclick="openImageModal('${c.imageUrl}')" class="w-32 h-32 object-cover rounded-lg border mt-1 cursor-pointer hover:opacity-90 transition" />` : ''}
               </div>
 
+              <!-- Action Bar: Like, Reply, Edit (Pencil), Delete (Trash) -->
               <div class="flex items-center gap-3 text-[10px] text-slate-400 pl-2">
                 <span>${c.time}</span>
                 <button onclick="smoothToggleLikeComment('${post.postId}', '${c.commentId}')" class="${isLiked ? 'text-rose-500 font-bold' : 'hover:text-rose-500'}">
@@ -391,20 +406,22 @@
                 <button onclick="toggleReplyBox('${c.commentId}')" class="hover:text-yruPink font-semibold">ตอบกลับ</button>
                 
                 ${canManage ? `
-                  <button onclick="smoothEditCommentPrompt('${post.postId}', '${c.commentId}', \`${c.text.replace(/`/g, '\\`')}\`)" class="hover:text-yruPink p-0.5" title="แก้ไข">
+                  <button onclick="smoothEditCommentPrompt('${post.postId}', '${c.commentId}', \`${c.text.replace(/`/g, '\\`')}\`)" class="hover:text-yruPink p-0.5" title="แก้ไขความคิดเห็น">
                     <i class="fa-solid fa-pen-to-square"></i>
                   </button>
-                  <button onclick="smoothDeleteComment('${post.postId}', '${c.commentId}')" class="hover:text-rose-500 p-0.5" title="ลบ">
+                  <button onclick="smoothDeleteComment('${post.postId}', '${c.commentId}')" class="hover:text-rose-500 p-0.5" title="ลบความคิดเห็น">
                     <i class="fa-solid fa-trash-can"></i>
                   </button>
                 ` : ''}
               </div>
 
+              <!-- Reply Input Box -->
               <div id="replyBox_${c.commentId}" class="hidden flex gap-2 items-center pt-1 pl-2">
                 <input type="text" id="replyInput_${c.commentId}" class="flex-1 p-1 text-[11px] border rounded focus:outline-none focus:border-yruPink dark:bg-slate-700" placeholder="ตอบกลับ ${c.authorName}...">
                 <button onclick="smoothSubmitComment('${post.postId}', '${c.commentId}')" class="bg-yruPink text-white text-[10px] px-2.5 py-1 rounded font-bold">ส่ง</button>
               </div>
 
+              <!-- Nested Sub-comments -->
               ${renderCommentsTree(post, c.commentId)}
             </div>
           </div>
@@ -437,6 +454,7 @@
       }
     }
 
+    // ฟังก์ชันเปิด SweetAlert แก้ไขความคิดเห็น
     function smoothEditCommentPrompt(postId, commentId, currentText) {
       Swal.fire({
         title: "แก้ไขความคิดเห็น",
@@ -467,6 +485,7 @@
       });
     }
 
+    // ฟังก์ชันลบความคิดเห็น (สั่งลบไฟล์รูปใน Drive จากฝั่งหลังบ้าน)
     async function smoothDeleteComment(postId, commentId) {
       if (confirm("ยืนยันการลบความคิดเห็นนี้? (หากมีรูปภาพจะถูกลบออกจากไดรฟ์ด้วย)")) {
         const res = await fetch(GAS_API_URL, {
@@ -519,7 +538,7 @@
       }
     }
 
-    // Load Sidebar Menus
+    // Load Sidebar Menus (ดึงตาม Role: ADMIN, TEACHER, STUDENT, ALL)
     async function loadMenus() {
       const res = await fetch(GAS_API_URL, {
         method: "POST",
