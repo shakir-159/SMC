@@ -8,7 +8,11 @@
   <script>
     tailwind.config = {
       darkMode: 'class',
-      theme: { extend: { colors: { yruPink: '#E66695', yruPinkHover: '#d45281' } } }
+      theme: {
+        extend: {
+          colors: { yruPink: '#E66695', yruPinkHover: '#d45281' }
+        }
+      }
     }
   </script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -23,6 +27,7 @@
   <!-- Header -->
   <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 px-4 py-3 shadow-sm">
     <div class="max-w-4xl mx-auto flex justify-between items-center">
+      
       <div class="flex items-center gap-3">
         <button onclick="toggleSidebar()" class="text-slate-600 dark:text-slate-300 hover:text-yruPink focus:outline-none p-1">
           <i class="fa-solid fa-bars text-xl"></i>
@@ -36,9 +41,26 @@
       </div>
 
       <div class="flex items-center gap-2 md:gap-3">
+        
         <button onclick="toggleDarkMode()" class="p-2 text-slate-500 dark:text-amber-400 hover:text-yruPink focus:outline-none">
           <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
         </button>
+
+        <!-- Notification Bell & Dropdown -->
+        <div id="notiBellContainer" class="hidden relative">
+          <button onclick="toggleNotiDropdown()" class="relative p-1.5 text-slate-500 dark:text-slate-300 hover:text-yruPink focus:outline-none">
+            <i class="fa-solid fa-bell text-lg"></i>
+            <span id="notiBadge" class="hidden absolute top-0 right-0 bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full min-w-[16px] text-center border-2 border-white dark:border-slate-800">0</span>
+          </button>
+
+          <div id="notiDropdown" class="hidden absolute right-0 mt-2 w-72 md:w-80 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 z-50 overflow-hidden">
+            <div class="p-3 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-700">
+              <h3 class="font-bold text-xs text-slate-800 dark:text-slate-100">การแจ้งเตือน</h3>
+              <span class="text-[10px] text-yruPink font-semibold">ล่าสุด</span>
+            </div>
+            <div id="notiList" class="max-h-64 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-700"></div>
+          </div>
+        </div>
 
         <div id="navUserArea">
           <button onclick="scrollToLogin()" class="bg-yruPink hover:bg-yruPinkHover text-white px-4 py-1.5 rounded-md text-sm font-medium transition shadow-sm">
@@ -49,7 +71,9 @@
         <button id="navLogoutBtn" onclick="logout()" class="hidden p-2 text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-700 rounded-full transition focus:outline-none" title="ออกจากระบบ">
           <i class="fa-solid fa-right-from-bracket text-lg"></i>
         </button>
+
       </div>
+
     </div>
   </header>
 
@@ -74,11 +98,16 @@
           <i class="fa-solid fa-house text-yruPink w-5"></i> หน้าแรก
         </a>
 
-        <div id="sidebarUserMenuSection" class="pt-3 border-t border-slate-100 dark:border-slate-700">
+        <div class="pt-3 border-t border-slate-100 dark:border-slate-700">
           <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">เมนูบริการตามสิทธิ์</p>
           <div id="sidebarUserMenus" class="space-y-1"></div>
         </div>
       </nav>
+    </div>
+
+    <div class="p-4 text-center border-t border-slate-100 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 space-y-1">
+      <p class="font-semibold text-slate-700 dark:text-slate-300">กรณีที่พบปัญหาการใช้งาน</p>
+      <p>ติดต่อได้ที่ <span class="text-slate-800 dark:text-slate-200 font-medium">073-299-612</span></p>
     </div>
   </aside>
 
@@ -113,34 +142,54 @@
     <div id="dashboardView" class="hidden space-y-6">
 
       <!-- Admin Panel -->
-      <div id="adminPanel" class="hidden space-y-4">
-        <div class="bg-gradient-to-r from-yruPink to-pink-600 text-white p-4 rounded-xl shadow-sm flex justify-between items-center">
-          <div>
-            <h2 class="font-bold text-base flex items-center gap-2"><i class="fa-solid fa-user-shield"></i> แผงควบคุมผู้ดูแลระบบ (Admin Panel)</h2>
-            <p class="text-xs opacity-90">จัดการข้อมูลผู้ใช้งาน เมนู และตรวจสอบโพสต์ทั้งหมดในระบบ</p>
+      <div id="adminPanel" class="hidden space-y-6">
+        
+        <!-- Send Notification Box -->
+        <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
+          <h2 class="text-sm font-bold text-yruPink flex items-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> ส่งการแจ้งเตือนด่วน
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-semibold mb-1">รูปแบบการส่ง</label>
+              <select id="sendTargetType" class="w-full p-2 border dark:bg-slate-700 rounded-lg text-xs" onchange="toggleTargetInput()">
+                <option value="ALL">ส่งถึงทุกคน (Broadcast)</option>
+                <option value="ROLE">ส่งตามกลุ่มสิทธิ์ (Role)</option>
+                <option value="USER">ส่งตรงรายบุคคล (Private)</option>
+              </select>
+            </div>
+            <div id="targetValueBox" class="hidden">
+              <label class="block text-xs font-semibold mb-1">ระบุเป้าหมาย</label>
+              <input type="text" id="sendTargetValue" class="w-full p-2 border dark:bg-slate-700 rounded-lg text-xs" placeholder="STUDENT หรือ User ID">
+            </div>
           </div>
+          <input type="text" id="sendNotiTitle" class="w-full p-2 border dark:bg-slate-700 rounded-lg text-xs font-bold" placeholder="หัวข้อแจ้งเตือน">
+          <textarea id="sendNotiMessage" rows="2" class="w-full p-2 border dark:bg-slate-700 rounded-lg text-xs" placeholder="รายละเอียดข้อความ..."></textarea>
+          <button onclick="submitNotification()" class="bg-yruPink hover:bg-yruPinkHover text-white text-xs font-bold px-4 py-2 rounded-md shadow-sm">ส่งการแจ้งเตือน</button>
         </div>
 
+        <!-- Admin CRUD Buttons -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 text-center space-y-2">
-            <h3 class="font-bold text-xs text-slate-800 dark:text-slate-100"><i class="fa-solid fa-users text-yruPink"></i> จัดการผู้ใช้งาน (Users)</h3>
-            <button onclick="openUsersCRUDModal()" class="w-full bg-yruPink text-white text-xs font-bold py-2 rounded-lg hover:bg-yruPinkHover">เปิดตาราง CRUD</button>
+            <h3 class="font-bold text-xs text-slate-800 dark:text-slate-100">จัดการผู้ใช้งาน (Users)</h3>
+            <button onclick="openUsersCRUDModal()" class="w-full bg-yruPink text-white text-xs font-bold py-2 rounded-lg hover:bg-yruPinkHover">เปิดตาราง</button>
           </div>
 
           <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 text-center space-y-2">
-            <h3 class="font-bold text-xs text-slate-800 dark:text-slate-100"><i class="fa-solid fa-bars-staggered text-yruPink"></i> จัดการเมนูระบบ (Menus)</h3>
-            <button onclick="openMenusCRUDModal()" class="w-full bg-yruPink text-white text-xs font-bold py-2 rounded-lg hover:bg-yruPinkHover">เปิดตาราง CRUD</button>
+            <h3 class="font-bold text-xs text-slate-800 dark:text-slate-100">จัดการเมนูระบบ (Menus)</h3>
+            <button onclick="openMenusCRUDModal()" class="w-full bg-yruPink text-white text-xs font-bold py-2 rounded-lg hover:bg-yruPinkHover">เปิดตาราง</button>
           </div>
 
           <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 text-center space-y-2">
-            <h3 class="font-bold text-xs text-slate-800 dark:text-slate-100"><i class="fa-solid fa-newspaper text-yruPink"></i> ตรวจสอบโพสต์ (Posts)</h3>
-            <button onclick="openPostsAuditModal()" class="w-full bg-yruPink text-white text-xs font-bold py-2 rounded-lg hover:bg-yruPinkHover">เปิดตาราง CRUD</button>
+            <h3 class="font-bold text-xs text-slate-800 dark:text-slate-100">ตรวจสอบโพสต์ (Posts)</h3>
+            <button onclick="openPostsAuditModal()" class="w-full bg-yruPink text-white text-xs font-bold py-2 rounded-lg hover:bg-yruPinkHover">เปิดตาราง</button>
           </div>
         </div>
+
       </div>
 
       <!-- Service Menu Section -->
-      <section id="serviceMenuSection" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <section class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
         <button onclick="toggleMenuDrawer()" class="w-full p-4 flex justify-between items-center text-left focus:outline-none bg-slate-50 dark:bg-slate-700/50">
           <h2 class="text-sm font-bold text-yruPink flex items-center gap-2">
             <i class="fa-solid fa-grip"></i> เมนูบริการระบบ
@@ -196,9 +245,14 @@
       }
     };
 
+    // UI Helpers
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('-translate-x-full');
       document.getElementById('sidebarBackdrop').classList.toggle('hidden');
+    }
+
+    function toggleNotiDropdown() {
+      document.getElementById('notiDropdown').classList.toggle('hidden');
     }
 
     function toggleDarkMode() {
@@ -218,6 +272,11 @@
       document.getElementById("menuDrawerIcon").classList.toggle("rotate-180");
     }
 
+    function toggleTargetInput() {
+      const type = document.getElementById('sendTargetType').value;
+      document.getElementById('targetValueBox').classList.toggle('hidden', type === 'ALL');
+    }
+
     function formatTextWithLinks(text) {
       if (!text) return "";
       const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -235,6 +294,7 @@
       });
     }
 
+    // Login & User Profile
     async function handleLogin() {
       const userId = document.getElementById("loginUserId").value.trim();
       const fullName = document.getElementById("loginFullName").value.trim();
@@ -265,19 +325,18 @@
     function showDashboard() {
       document.getElementById("loginView").classList.add("hidden");
       document.getElementById("dashboardView").classList.remove("hidden");
+      document.getElementById("notiBellContainer").classList.remove("hidden");
       document.getElementById("navLogoutBtn").classList.remove("hidden");
 
       renderUserHeader();
 
       if (currentUser.role === 'ADMIN') {
         document.getElementById("adminPanel").classList.remove("hidden");
-        document.getElementById("serviceMenuSection").classList.add("hidden");
-        document.getElementById("sidebarUserMenuSection").classList.add("hidden");
-      } else {
-        loadMenus();
       }
 
+      loadMenus();
       loadPosts();
+      loadNotifications();
     }
 
     function renderUserHeader() {
@@ -290,7 +349,7 @@
       `;
     }
 
-    // Modal โปรไฟล์ส่วนตัว (เพิ่มช่องแก้ไขเบอร์โทรศัพท์)
+    // Modal แก้ไขข้อมูลส่วนตัว (สามารถแก้ไขเบอร์โทรศัพท์และอัปเดตรูปโปรไฟล์ได้)
     function openUserProfileModal() {
       const avatarSrc = currentUser.avatar || DEFAULT_AVATAR;
       const userPhone = currentUser.phone || "";
@@ -319,7 +378,8 @@
         showCancelButton: true,
         confirmButtonText: "บันทึกข้อมูล",
         confirmButtonColor: "#E66695",
-        cancelButtonText: "ยกเลิก",
+        cancelButtonText: "ปิด",
+        cancelButtonColor: "#64748b",
         preConfirm: async () => {
           const newPhone = document.getElementById("editUserPhone").value.trim();
           const fileInput = document.getElementById("editAvatarFile").files[0];
@@ -375,6 +435,7 @@
       }
     }
 
+    // Load Dynamic Menus in Grid and Sidebar Drawer
     async function loadMenus() {
       const grid = document.getElementById("dynamicMenuGrid");
       const sidebarNav = document.getElementById("sidebarUserMenus");
@@ -391,6 +452,7 @@
           sidebarNav.innerHTML = data.menus.map(menu => renderMenuButton(menu, true)).join('');
         } else {
           grid.innerHTML = "<p class='text-xs text-slate-400 col-span-full'>ไม่มีเมนูสำหรับสิทธิ์ของคุณ</p>";
+          sidebarNav.innerHTML = "<p class='text-xs text-slate-400 px-4'>ไม่มีเมนู</p>";
         }
       } catch(e) {
         grid.innerHTML = "<p class='text-xs text-slate-400 col-span-full'>เกิดข้อผิดพลาดในการโหลดเมนู</p>";
@@ -442,6 +504,7 @@
       }
     }
 
+    // Posts & Smooth Likes / Comments
     async function loadPosts() {
       const feed = document.getElementById("newsFeed");
       if (loadedPostsData.length === 0) feed.innerHTML = "<p class='text-xs text-slate-400 text-center py-4'>กำลังโหลดข่าวสาร...</p>";
@@ -470,8 +533,9 @@
       }
 
       feed.innerHTML = loadedPostsData.map(post => {
-        const isLiked = (post.likes || []).includes(currentUser.id);
-        const canManage = post.userId == currentUser.id || ['ADMIN', 'TEACHER'].includes((currentUser.role || '').toUpperCase());
+        const uidStr = String(currentUser.id).trim();
+        const isLiked = (post.likes || []).some(id => String(id).trim() === uidStr);
+        const canManage = String(post.userId).trim() === uidStr || ['ADMIN', 'TEACHER'].includes((currentUser.role || '').toUpperCase());
         const postAvatar = post.authorAvatar || DEFAULT_AVATAR;
 
         return `
@@ -530,14 +594,16 @@
       }).join('');
     }
 
-    // Facebook-style Comment Tree Render (ปรับเพิ่มไอคอนแก้ไข และถังขยะ)
+    // Facebook-style Comment Tree Render
     function renderCommentsTree(post, parentId = null) {
       const comments = (post.comments || []).filter(c => (c.parentId || null) === parentId);
       if (comments.length === 0) return '';
 
+      const uidStr = String(currentUser.id).trim();
+
       return comments.map(c => {
-        const isLiked = (c.likes || []).includes(currentUser.id);
-        const canManage = c.userId == currentUser.id || ['ADMIN', 'TEACHER'].includes((currentUser.role || '').toUpperCase());
+        const isLiked = (c.likes || []).some(id => String(id).trim() === uidStr);
+        const canManage = String(c.userId).trim() === uidStr || ['ADMIN', 'TEACHER'].includes((currentUser.role || '').toUpperCase());
         const commentAvatar = c.authorAvatar || DEFAULT_AVATAR;
 
         return `
@@ -583,18 +649,40 @@
       document.getElementById(`replyBox_${commentId}`).classList.toggle('hidden');
     }
 
+    // Smooth Like (เติมสีหัวใจทันทีแบบตอบสนองรวดเร็ว)
     async function smoothToggleLike(postId) {
       const post = loadedPostsData.find(p => p.postId === postId);
       if (!post) return;
 
       if (!post.likes) post.likes = [];
-      const idx = post.likes.indexOf(currentUser.id);
-      if (idx > -1) post.likes.splice(idx, 1);
-      else post.likes.push(currentUser.id);
+      const uidStr = String(currentUser.id).trim();
+      const idx = post.likes.findIndex(id => String(id).trim() === uidStr);
+      if (idx > -1) {
+        post.likes.splice(idx, 1);
+      } else {
+        post.likes.push(uidStr);
+      }
 
+      // ปรับปรุง UI ทันที
       const countLabel = document.getElementById(`likeCount_${postId}`);
       if (countLabel) countLabel.textContent = `${post.likes.length} ถูกใจ`;
 
+      const btn = countLabel ? countLabel.closest('button') : null;
+      if (btn) {
+        const isNowLiked = post.likes.some(id => String(id).trim() === uidStr);
+        const icon = btn.querySelector('i');
+        if (isNowLiked) {
+          btn.classList.add('text-rose-500', 'font-bold');
+          btn.classList.remove('hover:text-rose-500');
+          if (icon) icon.className = "fa-solid fa-heart";
+        } else {
+          btn.classList.remove('text-rose-500', 'font-bold');
+          btn.classList.add('hover:text-rose-500');
+          if (icon) icon.className = "fa-regular fa-heart";
+        }
+      }
+
+      // Sync ไปยัง GAS Backend
       fetch(GAS_API_URL, {
         method: "POST",
         body: JSON.stringify({ action: "toggleLike", postId, userId: currentUser.id })
@@ -649,7 +737,6 @@
       }
     }
 
-    // ฟังก์ชันแก้ไขความคิดเห็น
     function smoothEditCommentPrompt(postId, commentId, currentText) {
       Swal.fire({
         title: "แก้ไขความคิดเห็น",
@@ -680,7 +767,6 @@
       });
     }
 
-    // ฟังก์ชันลบความคิดเห็น (ลบรูปภาพใน Drive อัตโนมัติฝั่ง Backend)
     async function smoothDeleteComment(postId, commentId) {
       if (confirm("ยืนยันการลบความคิดเห็นนี้? (หากมีรูปภาพในคอมเมนต์ จะถูกลบออกจาก Google Drive ด้วย)")) {
         const res = await fetch(GAS_API_URL, {
@@ -1003,6 +1089,86 @@
       }
     }
 
+    // Notifications Functions
+    async function loadNotifications() {
+      try {
+        const res = await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "getUserNotifications", userId: currentUser.id, userRole: currentUser.role })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          const badge = document.getElementById("notiBadge");
+          if (data.unreadCount > 0) {
+            badge.textContent = data.unreadCount > 99 ? '99+' : data.unreadCount;
+            badge.classList.remove("hidden");
+          } else {
+            badge.classList.add("hidden");
+          }
+
+          const list = document.getElementById("notiList");
+          if (data.notifications.length === 0) {
+            list.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">ไม่มีการแจ้งเตือน</p>`;
+          } else {
+            list.innerHTML = data.notifications.map(item => `
+              <div onclick="openNotiFullModal('${item.notiId}', '${encodeURIComponent(item.title)}', '${encodeURIComponent(item.message)}', '${item.createdAt}', ${item.isRead})" class="p-3 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition flex items-start gap-2.5 ${item.isRead ? 'opacity-50' : 'bg-pink-50/40'}">
+                <span class="w-2 h-2 rounded-full mt-1.5 inline-block ${item.isRead ? 'bg-transparent' : 'bg-yruPink'}"></span>
+                <div class="flex-1">
+                  <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100">${item.title}</h4>
+                  <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5 line-clamp-1">${item.message}</p>
+                  <span class="text-[10px] text-slate-400 mt-1 block">${item.createdAt}</span>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
+      } catch(e) {}
+    }
+
+    function openNotiFullModal(notiId, encTitle, encMessage, time, isRead) {
+      const title = decodeURIComponent(encTitle);
+      const message = decodeURIComponent(encMessage);
+
+      if (!isRead) {
+        fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "markNotiAsRead", userId: currentUser.id, notiId })
+        }).then(() => loadNotifications());
+      }
+
+      Swal.fire({
+        title: `<span class="text-yruPink font-bold text-base">${title}</span>`,
+        html: `
+          <div class="text-left text-xs space-y-3">
+            <p class="text-slate-400 text-[10px]">เวลาส่ง: ${time}</p>
+            <div class="p-3 bg-slate-50 dark:bg-slate-700 rounded-lg text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed">${message}</div>
+          </div>
+        `,
+        confirmButtonText: "ปิดหน้าต่าง",
+        confirmButtonColor: "#E66695"
+      });
+    }
+
+    async function submitNotification() {
+      const targetType = document.getElementById("sendTargetType").value;
+      const targetValue = document.getElementById("sendTargetValue").value.trim();
+      const title = document.getElementById("sendNotiTitle").value.trim();
+      const message = document.getElementById("sendNotiMessage").value.trim();
+
+      if (!title || !message) return Swal.fire("คำเตือน", "กรุณากรอกหัวข้อและข้อความ", "warning");
+
+      Swal.showLoading();
+      await fetch(GAS_API_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "sendNotification", targetType, targetValue, title, message })
+      });
+      Swal.fire("สำเร็จ", "ส่งการแจ้งเตือนเรียบร้อยแล้ว", "success");
+      document.getElementById("sendNotiTitle").value = "";
+      document.getElementById("sendNotiMessage").value = "";
+      loadNotifications();
+    }
+
     function filterNews(cat) { 
       currentFilter = cat; 
       document.querySelectorAll(".cat-btn").forEach(btn => {
@@ -1022,3 +1188,4 @@
   </script>
 </body>
 </html>
+            
