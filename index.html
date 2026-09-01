@@ -179,7 +179,7 @@
   </footer>
 
   <script>
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwuwoxbcH8sYL7HjW9fMJrBs-Mmw7YP2JbYrdxl66XyJL28FOiIGaTSXx9QMl54uBimpw/exec"; // <--- เปลี่ยนเป็น Web App URL ของคุณ
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwuwoxbcH8sYL7HjW9fMJrBs-Mmw7YP2JbYrdxl66XyJL28FOiIGaTSXx9QMl54uBimpw/exec"; // <--- Web App URL ของคุณ
     const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
     let currentUser = null;
     let currentFilter = "ทั้งหมด";
@@ -241,19 +241,24 @@
       if (!userId || !fullName) return Swal.fire("แจ้งเตือน", "กรุณากรอกรหัสประจำตัวและชื่อ-นามสกุล", "warning");
 
       Swal.showLoading();
-      const res = await fetch(GAS_API_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "checkLogin", userId, fullName })
-      });
-      const data = await res.json();
-      Swal.close();
+      try {
+        const res = await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "checkLogin", userId, fullName })
+        });
+        const data = await res.json();
+        Swal.close();
 
-      if (data.success) {
-        currentUser = data.userData;
-        localStorage.setItem("app_user", JSON.stringify(currentUser));
-        showDashboard();
-      } else {
-        Swal.fire("ข้อผิดพลาด", data.message, "error");
+        if (data.success) {
+          currentUser = data.userData;
+          localStorage.setItem("app_user", JSON.stringify(currentUser));
+          showDashboard();
+        } else {
+          Swal.fire("ข้อผิดพลาด", data.message, "error");
+        }
+      } catch (err) {
+        Swal.close();
+        Swal.fire("ข้อผิดพลาด", "ไม่สามารถเชื่อมต่อระบบได้", "error");
       }
     }
 
@@ -285,8 +290,10 @@
       `;
     }
 
+    // Modal โปรไฟล์ส่วนตัว (เพิ่มช่องแก้ไขเบอร์โทรศัพท์)
     function openUserProfileModal() {
       const avatarSrc = currentUser.avatar || DEFAULT_AVATAR;
+      const userPhone = currentUser.phone || "";
       Swal.fire({
         title: "ข้อมูลโปรไฟล์ส่วนตัว",
         html: `
@@ -297,43 +304,60 @@
             </div>
             <div>
               <label class="font-semibold text-slate-500">รหัสประจำตัว</label>
-              <input type="text" value="${currentUser.id}" disabled class="w-full p-2 bg-slate-100 border rounded mt-1">
+              <input type="text" value="${currentUser.id}" disabled class="w-full p-2 bg-slate-100 dark:bg-slate-700 border dark:border-slate-600 rounded mt-1 text-slate-500 dark:text-slate-400">
             </div>
             <div>
               <label class="font-semibold text-slate-500">ชื่อ-นามสกุล</label>
-              <input type="text" value="${currentUser.name}" disabled class="w-full p-2 bg-slate-100 border rounded mt-1">
+              <input type="text" value="${currentUser.name}" disabled class="w-full p-2 bg-slate-100 dark:bg-slate-700 border dark:border-slate-600 rounded mt-1 text-slate-500 dark:text-slate-400">
+            </div>
+            <div>
+              <label class="font-semibold text-slate-600 dark:text-slate-300">เบอร์โทรศัพท์</label>
+              <input type="tel" id="editUserPhone" value="${userPhone}" class="w-full p-2 border border-slate-300 dark:border-slate-600 dark:bg-slate-700 rounded mt-1 text-slate-700 dark:text-slate-200 focus:outline-none focus:border-yruPink" placeholder="เช่น 0812345678">
             </div>
           </div>
         `,
         showCancelButton: true,
-        confirmButtonText: "บันทึกรูปโปรไฟล์",
+        confirmButtonText: "บันทึกข้อมูล",
         confirmButtonColor: "#E66695",
+        cancelButtonText: "ยกเลิก",
         preConfirm: async () => {
+          const newPhone = document.getElementById("editUserPhone").value.trim();
           const fileInput = document.getElementById("editAvatarFile").files[0];
-          if (!fileInput) return true;
 
-          const avatarBase64 = await new Promise(r => {
-            const reader = new FileReader();
-            reader.onload = () => r(reader.result);
-            reader.readAsDataURL(fileInput);
-          });
+          let avatarBase64 = "", avatarName = "";
+          if (fileInput) {
+            avatarBase64 = await new Promise(r => {
+              const reader = new FileReader();
+              reader.onload = () => r(reader.result);
+              reader.readAsDataURL(fileInput);
+            });
+            avatarName = fileInput.name;
+          }
 
           Swal.showLoading();
-          const res = await fetch(GAS_API_URL, {
-            method: "POST",
-            body: JSON.stringify({
-              action: "updateUserProfile",
-              userId: currentUser.id,
-              currentAvatar: currentUser.avatar,
-              avatarBase64: avatarBase64,
-              avatarName: fileInput.name
-            })
-          });
-          const data = await res.json();
-          if (data.success) {
-            currentUser.avatar = data.avatarUrl;
-            localStorage.setItem("app_user", JSON.stringify(currentUser));
-            renderUserHeader();
+          try {
+            const res = await fetch(GAS_API_URL, {
+              method: "POST",
+              body: JSON.stringify({
+                action: "updateUserProfile",
+                userId: currentUser.id,
+                phone: newPhone,
+                avatarBase64: avatarBase64,
+                avatarName: avatarName
+              })
+            });
+            const data = await res.json();
+            if (data.success && data.userData) {
+              currentUser.phone = data.userData.phone;
+              currentUser.avatar = data.userData.avatar;
+              localStorage.setItem("app_user", JSON.stringify(currentUser));
+              renderUserHeader();
+              Swal.fire({ icon: 'success', title: 'บันทึกข้อมูลสำเร็จ', timer: 1500, showConfirmButton: false });
+            } else {
+              Swal.fire("ข้อผิดพลาด", data.message || "ไม่สามารถอัปเดตข้อมูลได้", "error");
+            }
+          } catch (err) {
+            Swal.fire("ข้อผิดพลาด", err.toString(), "error");
           }
         }
       });
@@ -355,58 +379,86 @@
       const grid = document.getElementById("dynamicMenuGrid");
       const sidebarNav = document.getElementById("sidebarUserMenus");
 
-      const res = await fetch(GAS_API_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "getMenus", userRole: currentUser.role })
-      });
-      const data = await res.json();
+      try {
+        const res = await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "getMenus", userRole: currentUser.role })
+        });
+        const data = await res.json();
 
-      if (data.success && data.menus.length > 0) {
-        grid.innerHTML = data.menus.map(menu => renderMenuButton(menu, false)).join('');
-        sidebarNav.innerHTML = data.menus.map(menu => renderMenuButton(menu, true)).join('');
-      } else {
-        grid.innerHTML = "<p class='text-xs text-slate-400 col-span-full'>ไม่มีเมนูสำหรับสิทธิ์ของคุณ</p>";
+        if (data.success && data.menus.length > 0) {
+          grid.innerHTML = data.menus.map(menu => renderMenuButton(menu, false)).join('');
+          sidebarNav.innerHTML = data.menus.map(menu => renderMenuButton(menu, true)).join('');
+        } else {
+          grid.innerHTML = "<p class='text-xs text-slate-400 col-span-full'>ไม่มีเมนูสำหรับสิทธิ์ของคุณ</p>";
+        }
+      } catch(e) {
+        grid.innerHTML = "<p class='text-xs text-slate-400 col-span-full'>เกิดข้อผิดพลาดในการโหลดเมนู</p>";
       }
     }
 
     function renderMenuButton(menu, isSidebar) {
-      let link = menu.url;
-      if (!menu.isDirect) {
-        const sep = link.includes('?') ? '&' : '?';
-        link += `${sep}id=${encodeURIComponent(currentUser.id)}`;
-      }
+      const openMode = (menu.openMode || 'TAB').toUpperCase();
+      const isDirect = menu.isDirect;
+      const url = menu.url;
+      const name = menu.name.replace(/'/g, "\\'");
 
       if (isSidebar) {
         return `
-          <a href="${link}" target="_blank" onclick="toggleSidebar()" class="flex items-center gap-3 px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-yruPink hover:bg-pink-50 dark:hover:bg-slate-700 rounded-lg text-xs font-medium transition">
+          <button onclick="openMenuUrl('${url}', ${isDirect}, '${name}', '${openMode}'); toggleSidebar();" class="w-full flex items-center gap-3 px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-yruPink hover:bg-pink-50 dark:hover:bg-slate-700 rounded-lg text-xs font-medium transition text-left">
             <i class="${menu.icon || 'fa-solid fa-link'} text-yruPink w-4"></i> ${menu.name}
-          </a>
+          </button>
         `;
       }
 
       return `
-        <a href="${link}" target="_blank" class="flex flex-col items-center p-3 bg-slate-50 dark:bg-slate-700/50 hover:bg-pink-50 border border-slate-200 dark:border-slate-600 hover:border-yruPink rounded-xl transition group text-center">
+        <button onclick="openMenuUrl('${url}', ${isDirect}, '${name}', '${openMode}')" class="flex flex-col items-center p-3 bg-slate-50 dark:bg-slate-700/50 hover:bg-pink-50 border border-slate-200 dark:border-slate-600 hover:border-yruPink rounded-xl transition group text-center w-full">
           <div class="w-10 h-10 rounded-lg bg-pink-100 text-yruPink flex items-center justify-center text-lg mb-1.5 group-hover:bg-yruPink group-hover:text-white transition">
             <i class="${menu.icon || 'fa-solid fa-link'}"></i>
           </div>
           <span class="font-bold text-xs text-slate-700 dark:text-slate-200 group-hover:text-yruPink">${menu.name}</span>
-        </a>
+        </button>
       `;
+    }
+
+    function openMenuUrl(url, isDirect, name, openMode) {
+      let link = url;
+      if (!isDirect) {
+        const sep = link.includes('?') ? '&' : '?';
+        link += `${sep}id=${encodeURIComponent(currentUser.id)}`;
+      }
+
+      if (openMode === 'MODAL') {
+        Swal.fire({
+          title: name,
+          html: `<iframe src="${link}" class="w-full h-[75vh] border-0 rounded-lg"></iframe>`,
+          width: '90%',
+          showCloseButton: true,
+          showConfirmButton: false,
+          customClass: { popup: 'p-2 md:p-4' }
+        });
+      } else {
+        window.open(link, '_blank');
+      }
     }
 
     async function loadPosts() {
       const feed = document.getElementById("newsFeed");
       if (loadedPostsData.length === 0) feed.innerHTML = "<p class='text-xs text-slate-400 text-center py-4'>กำลังโหลดข่าวสาร...</p>";
 
-      const res = await fetch(GAS_API_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "getPosts", categoryFilter: currentFilter })
-      });
-      const data = await res.json();
+      try {
+        const res = await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "getPosts", categoryFilter: currentFilter })
+        });
+        const data = await res.json();
 
-      if (data.success) {
-        loadedPostsData = data.posts;
-        renderPostsFeed();
+        if (data.success) {
+          loadedPostsData = data.posts;
+          renderPostsFeed();
+        }
+      } catch(e) {
+        feed.innerHTML = "<p class='text-xs text-slate-400 text-center py-4'>เกิดข้อผิดพลาดในการโหลดข่าวสาร</p>";
       }
     }
 
@@ -478,7 +530,7 @@
       }).join('');
     }
 
-    <!-- Facebook-style Comment Tree Render (ปรับเพิ่มไอคอนแก้ไข และถังขยะ) -->
+    // Facebook-style Comment Tree Render (ปรับเพิ่มไอคอนแก้ไข และถังขยะ)
     function renderCommentsTree(post, parentId = null) {
       const comments = (post.comments || []).filter(c => (c.parentId || null) === parentId);
       if (comments.length === 0) return '';
@@ -668,10 +720,10 @@
         title: "สร้างโพสต์ข่าวสาร",
         html: `
           <div class="space-y-3 text-left text-xs">
-            <textarea id="modalPostContent" rows="3" class="w-full p-2 border rounded" placeholder="พิมพ์ข้อความ..."></textarea>
+            <textarea id="modalPostContent" rows="3" class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600" placeholder="พิมพ์ข้อความ..."></textarea>
             <div>
               <label class="block font-semibold mb-1">หมวดหมู่</label>
-              <select id="modalPostCategory" class="w-full p-2 border rounded">
+              <select id="modalPostCategory" class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600">
                 <option value="ทั่วไป">ทั่วไป</option>
                 <option value="ข่าวประกาศ">ข่าวประกาศ</option>
                 <option value="กิจกรรม">กิจกรรม</option>
@@ -679,7 +731,7 @@
             </div>
             <div>
               <label class="block font-semibold mb-1">แนบรูปภาพ</label>
-              <input type="file" id="modalPostImage" accept="image/*" onchange="previewImage(this, 'postImgPreview')" class="w-full">
+              <input type="file" id="modalPostImage" accept="image/*" onchange="previewImage(this, 'postImgPreview')" class="w-full text-xs">
               <img id="postImgPreview" class="hidden mt-2 w-full max-h-48 object-cover rounded-lg border" />
             </div>
           </div>
@@ -725,8 +777,8 @@
         title: "แก้ไขโพสต์",
         html: `
           <div class="space-y-3 text-left text-xs">
-            <textarea id="editPostContent" rows="3" class="w-full p-2 border rounded">${post.content}</textarea>
-            <select id="editPostCategory" class="w-full p-2 border rounded">
+            <textarea id="editPostContent" rows="3" class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600">${post.content}</textarea>
+            <select id="editPostCategory" class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600">
               <option value="ทั่วไป" ${post.category==='ทั่วไป'?'selected':''}>ทั่วไป</option>
               <option value="ข่าวประกาศ" ${post.category==='ข่าวประกาศ'?'selected':''}>ข่าวประกาศ</option>
               <option value="กิจกรรม" ${post.category==='กิจกรรม'?'selected':''}>กิจกรรม</option>
@@ -785,7 +837,7 @@
           </div>
           <div class="max-h-80 overflow-y-auto">
             <table class="w-full">
-              <thead><tr class="bg-slate-100 text-xs text-left"><th class="p-2">ID</th><th class="p-2">ชื่อ</th><th class="p-2">เบอร์</th><th class="p-2">สถานะ</th><th class="p-2">Role</th><th class="p-2">Avatar</th><th class="p-2">จัดการ</th></tr></thead>
+              <thead><tr class="bg-slate-100 dark:bg-slate-700 text-xs text-left"><th class="p-2">ID</th><th class="p-2">ชื่อ</th><th class="p-2">เบอร์</th><th class="p-2">สถานะ</th><th class="p-2">Role</th><th class="p-2">Avatar</th><th class="p-2">จัดการ</th></tr></thead>
               <tbody>${rowsHtml}</tbody>
             </table>
           </div>
@@ -796,21 +848,21 @@
 
     function editUserPrompt(id, name, phone, status, role, avatar) {
       Swal.fire({
-        title: id ? "แก้ไขข้อมูลผู้ใช้ทุกช่อง" : "เพิ่มผู้ใช้ใหม่",
+        title: id ? "แก้ไขข้อมูลผู้ใช้" : "เพิ่มผู้ใช้ใหม่",
         html: `
           <div class="space-y-2 text-left text-xs">
-            <div><label class="font-bold">User ID</label><input type="text" id="uId" value="${id}" ${id ? 'disabled' : ''} class="w-full p-2 border rounded"></div>
-            <div><label class="font-bold">ชื่อ-นามสกุล</label><input type="text" id="uName" value="${name}" class="w-full p-2 border rounded"></div>
-            <div><label class="font-bold">เบอร์โทรศัพท์</label><input type="text" id="uPhone" value="${phone}" class="w-full p-2 border rounded"></div>
-            <div><label class="font-bold">สถานะ</label><input type="text" id="uStatus" value="${status}" class="w-full p-2 border rounded"></div>
+            <div><label class="font-bold">User ID</label><input type="text" id="uId" value="${id}" ${id ? 'disabled' : ''} class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600"></div>
+            <div><label class="font-bold">ชื่อ-นามสกุล</label><input type="text" id="uName" value="${name}" class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600"></div>
+            <div><label class="font-bold">เบอร์โทรศัพท์</label><input type="text" id="uPhone" value="${phone}" class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600"></div>
+            <div><label class="font-bold">สถานะ</label><input type="text" id="uStatus" value="${status}" class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600"></div>
             <div><label class="font-bold">Role</label>
-              <select id="uRole" class="w-full p-2 border rounded">
+              <select id="uRole" class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600">
                 <option value="STUDENT" ${role==='STUDENT'?'selected':''}>STUDENT</option>
                 <option value="TEACHER" ${role==='TEACHER'?'selected':''}>TEACHER</option>
                 <option value="ADMIN" ${role==='ADMIN'?'selected':''}>ADMIN</option>
               </select>
             </div>
-            <div><label class="font-bold">Avatar URL</label><input type="text" id="uAvatar" value="${avatar}" class="w-full p-2 border rounded"></div>
+            <div><label class="font-bold">Avatar URL</label><input type="text" id="uAvatar" value="${avatar}" class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600"></div>
           </div>
         `,
         showCancelButton: true,
@@ -865,7 +917,7 @@
           </div>
           <div class="max-h-80 overflow-y-auto">
             <table class="w-full">
-              <thead><tr class="bg-slate-100 text-xs text-left"><th class="p-2">ID</th><th class="p-2">ชื่อ</th><th class="p-2">Icon</th><th class="p-2">URL</th><th class="p-2">Direct</th><th class="p-2">Role</th><th class="p-2">OpenMode</th><th class="p-2">จัดการ</th></tr></thead>
+              <thead><tr class="bg-slate-100 dark:bg-slate-700 text-xs text-left"><th class="p-2">ID</th><th class="p-2">ชื่อ</th><th class="p-2">Icon</th><th class="p-2">URL</th><th class="p-2">Direct</th><th class="p-2">Role</th><th class="p-2">OpenMode</th><th class="p-2">จัดการ</th></tr></thead>
               <tbody>${rowsHtml}</tbody>
             </table>
           </div>
@@ -876,16 +928,16 @@
 
     function editMenuPrompt(id, name, icon, url, direct, role, openMode) {
       Swal.fire({
-        title: "แก้ไขข้อมูลเมนูทุกช่อง",
+        title: "แก้ไขข้อมูลเมนู",
         html: `
           <div class="space-y-2 text-left text-xs">
-            <div><label class="font-bold">Menu ID</label><input type="text" id="mId" value="${id}" disabled class="w-full p-2 border rounded"></div>
-            <div><label class="font-bold">ชื่อเมนู</label><input type="text" id="mName" value="${name}" class="w-full p-2 border rounded"></div>
-            <div><label class="font-bold">Icon Class</label><input type="text" id="mIcon" value="${icon}" class="w-full p-2 border rounded"></div>
-            <div><label class="font-bold">URL Link</label><input type="text" id="mUrl" value="${url}" class="w-full p-2 border rounded"></div>
-            <div><label class="font-bold">isDirect (TRUE/FALSE)</label><input type="text" id="mDirect" value="${direct}" class="w-full p-2 border rounded"></div>
-            <div><label class="font-bold">Role (เช่น ALL, STUDENT, TEACHER, ADMIN)</label><input type="text" id="mRole" value="${role}" class="w-full p-2 border rounded"></div>
-            <div><label class="font-bold">OpenMode (TAB/MODAL)</label><input type="text" id="mOpenMode" value="${openMode}" class="w-full p-2 border rounded"></div>
+            <div><label class="font-bold">Menu ID</label><input type="text" id="mId" value="${id}" disabled class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600"></div>
+            <div><label class="font-bold">ชื่อเมนู</label><input type="text" id="mName" value="${name}" class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600"></div>
+            <div><label class="font-bold">Icon Class</label><input type="text" id="mIcon" value="${icon}" class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600"></div>
+            <div><label class="font-bold">URL Link</label><input type="text" id="mUrl" value="${url}" class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600"></div>
+            <div><label class="font-bold">isDirect (TRUE/FALSE)</label><input type="text" id="mDirect" value="${direct}" class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600"></div>
+            <div><label class="font-bold">Role (เช่น ALL, STUDENT, TEACHER, ADMIN)</label><input type="text" id="mRole" value="${role}" class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600"></div>
+            <div><label class="font-bold">OpenMode (TAB/MODAL)</label><input type="text" id="mOpenMode" value="${openMode}" class="w-full p-2 border rounded dark:bg-slate-700 dark:border-slate-600"></div>
           </div>
         `,
         showCancelButton: true,
@@ -934,7 +986,7 @@
         html: `
           <div class="max-h-80 overflow-y-auto">
             <table class="w-full">
-              <thead><tr class="bg-slate-100 text-xs text-left"><th class="p-2">ผู้โพสต์</th><th class="p-2">ข้อความ</th><th class="p-2">หมวดหมู่</th><th class="p-2">เวลา</th><th class="p-2">จัดการ</th></tr></thead>
+              <thead><tr class="bg-slate-100 dark:bg-slate-700 text-xs text-left"><th class="p-2">ผู้โพสต์</th><th class="p-2">ข้อความ</th><th class="p-2">หมวดหมู่</th><th class="p-2">เวลา</th><th class="p-2">จัดการ</th></tr></thead>
               <tbody>${rowsHtml}</tbody>
             </table>
           </div>
