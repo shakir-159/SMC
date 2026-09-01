@@ -3,179 +3,292 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบข่าวสารและบริการนักเรียน/ครู</title>
-  
-  <!-- Tailwind CSS & Font Awesome -->
+  <title>ระบบบริการออนไลน์ - YRU Style</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
-      theme: {
-        extend: {
-          colors: { yruPink: '#E66695', yruYellow: '#F3A812' },
-          fontFamily: { sarabun: ['Sarabun', 'sans-serif'] }
-        }
-      }
+      theme: { extend: { colors: { yruPink: '#E66695', yruPinkHover: '#d45281' } } }
     }
   </script>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body { font-family: 'Sarabun', sans-serif; }
+  </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sarabun min-h-screen flex flex-col transition-colors duration-200">
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-200 min-h-screen flex flex-col justify-between relative overflow-x-hidden transition-colors">
 
-  <!-- Header Navbar -->
-  <header class="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-40 border-b border-slate-100 dark:border-slate-700">
-    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+  <!-- Header -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 px-4 py-3 shadow-sm">
+    <div class="max-w-4xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-3">
-        <button onclick="toggleSidebar()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300">
+        <button onclick="toggleSidebar()" class="text-slate-600 dark:text-slate-300 hover:text-yruPink focus:outline-none p-1">
           <i class="fa-solid fa-bars text-xl"></i>
         </button>
-        <span class="font-bold text-lg text-yruPink flex items-center gap-2">
-          <i class="fa-solid fa-graduation-cap"></i> Portal System
-        </span>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-xs border border-amber-400 shadow-sm">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <span class="font-bold text-xl text-yruPink tracking-tight">YRU</span>
+        </div>
       </div>
 
-      <div class="flex items-center gap-3">
-        <button onclick="toggleDarkMode()" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700">
+      <div class="flex items-center gap-2 md:gap-3">
+        <button onclick="toggleDarkMode()" class="p-2 text-slate-500 dark:text-amber-400 hover:text-yruPink focus:outline-none">
           <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
         </button>
-        
-        <div id="userProfileArea" class="flex items-center gap-2 cursor-pointer p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition" onclick="openUserProfileModal()">
-          <img id="navAvatar" src="https://via.placeholder.com/150" class="w-8 h-8 rounded-full object-cover border border-yruPink" />
-          <span id="navUserName" class="text-xs font-semibold hidden sm:inline-block">ผู้ใช้งาน</span>
+
+        <div id="navUserArea">
+          <button onclick="scrollToLogin()" class="bg-yruPink hover:bg-yruPinkHover text-white px-4 py-1.5 rounded-md text-sm font-medium transition shadow-sm">
+            เข้าสู่ระบบ
+          </button>
         </div>
-        
-        <button onclick="logout()" class="text-xs text-rose-500 hover:text-rose-600 font-bold px-2 py-1">
-          <i class="fa-solid fa-right-from-bracket"></i>
+
+        <button id="navLogoutBtn" onclick="logout()" class="hidden p-2 text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-700 rounded-full transition focus:outline-none" title="ออกจากระบบ">
+          <i class="fa-solid fa-right-from-bracket text-lg"></i>
         </button>
       </div>
     </div>
   </header>
 
   <!-- Sidebar Overlay & Menu -->
-  <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/40 z-50 hidden opacity-0 transition-opacity"></div>
-  <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-white dark:bg-slate-800 shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 flex flex-col">
-    <div class="p-4 border-b dark:border-slate-700 flex justify-between items-center bg-yruPink text-white">
-      <h2 class="font-bold">เมนูการใช้งาน</h2>
-      <button onclick="toggleSidebar()" class="text-white hover:text-slate-200"><i class="fa-solid fa-xmark text-xl"></i></button>
-    </div>
-    <div id="sidebarMenuContainer" class="flex-1 overflow-y-auto p-3 space-y-1">
-      <!-- Dynamic Menus -->
+  <div id="sidebarBackdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/40 z-40 hidden transition-opacity"></div>
+  <aside id="sidebar" class="fixed top-0 left-0 w-72 h-full bg-white dark:bg-slate-800 z-50 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between overflow-y-auto">
+    <div>
+      <div class="p-4 flex justify-between items-center border-b border-slate-100 dark:border-slate-700">
+        <div class="flex items-center gap-2">
+          <div class="w-10 h-10 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-sm border border-amber-400">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <span class="font-bold text-2xl text-yruPink tracking-wide">YRU</span>
+        </div>
+        <button onclick="toggleSidebar()" class="text-yruPink text-xl hover:text-slate-400 p-1">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="p-3 space-y-1">
+        <a href="#" onclick="toggleSidebar()" class="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-200 hover:text-yruPink hover:bg-pink-50 dark:hover:bg-slate-700 rounded-lg text-sm font-bold transition">
+          <i class="fa-solid fa-house text-yruPink w-5"></i> หน้าแรก
+        </a>
+
+        <div id="sidebarUserMenuSection" class="pt-3 border-t border-slate-100 dark:border-slate-700">
+          <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">เมนูบริการตามสิทธิ์</p>
+          <div id="sidebarUserMenus" class="space-y-1"></div>
+        </div>
+      </nav>
     </div>
   </aside>
 
-  <!-- Main Content Area -->
-  <main class="flex-1 max-w-4xl w-full mx-auto p-4 space-y-4">
-    
-    <!-- Post Creation Trigger Bar -->
-    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
-      <img id="createPostAvatar" src="https://via.placeholder.com/150" class="w-10 h-10 rounded-full object-cover border border-yruPink" />
-      <button onclick="openCreatePostModal()" class="flex-1 text-left bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 dark:text-slate-400 rounded-full px-4 py-2.5 text-xs">
-        คุณกำลังคิดอะไรอยู่...
-      </button>
+  <!-- Main View Area -->
+  <main class="flex-1 max-w-4xl mx-auto w-full p-4 my-4">
+
+    <!-- Login View -->
+    <div id="loginView" class="max-w-md mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden border border-slate-200 dark:border-slate-700">
+      <div class="bg-yruPink text-white px-5 py-3.5 flex items-center gap-2">
+        <i class="fa-solid fa-right-to-bracket text-base"></i>
+        <h2 class="font-medium text-sm md:text-base">กรุณาป้อนรหัสประจำตัวและชื่อ-นามสกุล</h2>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">รหัสประจำตัว</label>
+          <input type="text" id="loginUserId" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 dark:bg-slate-700 rounded-lg text-sm focus:outline-none focus:border-yruPink" placeholder="เช่น 6601001">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">ชื่อ - นามสกุล</label>
+          <input type="text" id="loginFullName" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 dark:bg-slate-700 rounded-lg text-sm focus:outline-none focus:border-yruPink" placeholder="เช่น สมชาย ใจดี">
+        </div>
+
+        <button onclick="handleLogin()" class="bg-yruPink hover:bg-yruPinkHover text-white font-medium text-sm px-6 py-2 rounded-md transition shadow-sm">
+          เข้าสู่ระบบ
+        </button>
+      </div>
     </div>
 
-    <!-- Category Filter Bar -->
-    <div class="flex gap-2 overflow-x-auto pb-2 text-xs scrollbar-none" id="categoryFilterContainer">
-      <button onclick="filterCategory('ทั้งหมด')" class="cat-btn active bg-yruPink text-white px-4 py-1.5 rounded-full font-semibold shadow-sm">ทั้งหมด</button>
-      <button onclick="filterCategory('ทั่วไป')" class="cat-btn bg-white dark:bg-slate-800 border dark:border-slate-700 px-4 py-1.5 rounded-full hover:bg-slate-100">ทั่วไป</button>
-      <button onclick="filterCategory('ข่าวประกาศ')" class="cat-btn bg-white dark:bg-slate-800 border dark:border-slate-700 px-4 py-1.5 rounded-full hover:bg-slate-100">ข่าวประกาศ</button>
-      <button onclick="filterCategory('กิจกรรม')" class="cat-btn bg-white dark:bg-slate-800 border dark:border-slate-700 px-4 py-1.5 rounded-full hover:bg-slate-100">กิจกรรม</button>
+    <!-- Dashboard View -->
+    <div id="dashboardView" class="hidden space-y-6">
+
+      <!-- Admin Panel -->
+      <div id="adminPanel" class="hidden space-y-4">
+        <div class="bg-gradient-to-r from-yruPink to-pink-600 text-white p-4 rounded-xl shadow-sm flex justify-between items-center">
+          <div>
+            <h2 class="font-bold text-base flex items-center gap-2"><i class="fa-solid fa-user-shield"></i> แผงควบคุมผู้ดูแลระบบ (Admin Panel)</h2>
+            <p class="text-xs opacity-90">จัดการข้อมูลผู้ใช้งาน เมนู และตรวจสอบโพสต์ทั้งหมดในระบบ</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 text-center space-y-2">
+            <h3 class="font-bold text-xs text-slate-800 dark:text-slate-100"><i class="fa-solid fa-users text-yruPink"></i> จัดการผู้ใช้งาน (Users)</h3>
+            <button onclick="openUsersCRUDModal()" class="w-full bg-yruPink text-white text-xs font-bold py-2 rounded-lg hover:bg-yruPinkHover">เปิดตาราง CRUD</button>
+          </div>
+
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 text-center space-y-2">
+            <h3 class="font-bold text-xs text-slate-800 dark:text-slate-100"><i class="fa-solid fa-bars-staggered text-yruPink"></i> จัดการเมนูระบบ (Menus)</h3>
+            <button onclick="openMenusCRUDModal()" class="w-full bg-yruPink text-white text-xs font-bold py-2 rounded-lg hover:bg-yruPinkHover">เปิดตาราง CRUD</button>
+          </div>
+
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 text-center space-y-2">
+            <h3 class="font-bold text-xs text-slate-800 dark:text-slate-100"><i class="fa-solid fa-newspaper text-yruPink"></i> ตรวจสอบโพสต์ (Posts)</h3>
+            <button onclick="openPostsAuditModal()" class="w-full bg-yruPink text-white text-xs font-bold py-2 rounded-lg hover:bg-yruPinkHover">เปิดตาราง CRUD</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Service Menu Section -->
+      <section id="serviceMenuSection" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <button onclick="toggleMenuDrawer()" class="w-full p-4 flex justify-between items-center text-left focus:outline-none bg-slate-50 dark:bg-slate-700/50">
+          <h2 class="text-sm font-bold text-yruPink flex items-center gap-2">
+            <i class="fa-solid fa-grip"></i> เมนูบริการระบบ
+          </h2>
+          <i id="menuDrawerIcon" class="fa-solid fa-chevron-up text-xs text-slate-400 transition-transform"></i>
+        </button>
+        <div id="menuDrawerContent" class="p-5 border-t border-slate-100 dark:border-slate-700">
+          <div id="dynamicMenuGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+        </div>
+      </section>
+
+      <!-- News Feed Section -->
+      <section class="space-y-4">
+        <div class="flex justify-between items-center">
+          <div class="flex space-x-2 overflow-x-auto pb-1">
+            <button onclick="filterNews('ทั้งหมด')" class="cat-btn active bg-yruPink text-white px-3 py-1 rounded-full text-xs font-semibold">ทั้งหมด</button>
+            <button onclick="filterNews('ข่าวประกาศ')" class="cat-btn bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-full text-xs font-semibold hover:bg-slate-100">ข่าวประกาศ</button>
+            <button onclick="filterNews('กิจกรรม')" class="cat-btn bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-full text-xs font-semibold hover:bg-slate-100">กิจกรรม</button>
+          </div>
+          <button onclick="openCreatePostModal()" class="bg-yruPink hover:bg-yruPinkHover text-white text-xs font-bold px-3.5 py-1.5 rounded-full shadow-sm flex items-center gap-1.5">
+            <i class="fa-solid fa-plus"></i> โพสต์ข่าว
+          </button>
+        </div>
+
+        <div id="newsFeed" class="space-y-4"></div>
+      </section>
+
     </div>
 
-    <!-- News Feed Posts Container -->
-    <div id="postsFeedContainer" class="space-y-4">
-      <div class="text-center py-10 text-slate-400"><i class="fa-solid fa-spinner fa-spin text-2xl"></i><p class="mt-2 text-xs">กำลังโหลดข่าวสาร...</p></div>
-    </div>
   </main>
 
-  <!-- JavaScript App Logic -->
+  <!-- Footer -->
+  <footer class="p-4 text-xs text-slate-400 max-w-4xl mx-auto w-full flex justify-between items-center">
+    <span>@ 2026 <strong class="text-yruPink font-semibold">Visionnet</strong></span>
+    <span id="lastUpdateLabel" class="text-[10px]">Last Update: --/--/---- --:--</span>
+  </footer>
+
   <script>
-    // ==========================================
-    // CONFIGURATION
-    // ==========================================
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwuwoxbcH8sYL7HjW9fMJrBs-Mmw7YP2JbYrdxl66XyJL28FOiIGaTSXx9QMl54uBimpw/exec"; // วาง Web App URL ที่นี่
-    const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwuwoxbcH8sYL7HjW9fMJrBs-Mmw7YP2JbYrdxl66XyJL28FOiIGaTSXx9QMl54uBimpw/exec"; // <--- เปลี่ยนเป็น Web App URL ของคุณ
+    const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
     let currentUser = null;
+    let currentFilter = "ทั้งหมด";
     let loadedPostsData = [];
-    let currentCategoryFilter = "ทั้งหมด";
 
-    // Initialize System
-    window.addEventListener("DOMContentLoaded", () => {
-      initTheme();
-      checkAuth();
-    });
+    window.onload = () => {
+      const now = new Date();
+      document.getElementById("lastUpdateLabel").textContent = "Last Update " + now.toLocaleDateString('th-TH') + " " + now.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'});
 
-    function checkAuth() {
       const savedUser = localStorage.getItem("app_user");
-      if (!savedUser) {
-        promptLogin();
-      } else {
+      if (savedUser) {
         currentUser = JSON.parse(savedUser);
-        renderUserHeader();
-        loadMenus();
-        loadPosts();
+        showDashboard();
+      }
+    };
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('-translate-x-full');
+      document.getElementById('sidebarBackdrop').classList.toggle('hidden');
+    }
+
+    function toggleDarkMode() {
+      const html = document.documentElement;
+      const icon = document.getElementById("themeIcon");
+      if (html.classList.contains("dark")) {
+        html.classList.remove("dark");
+        icon.className = "fa-solid fa-moon text-lg";
+      } else {
+        html.classList.add("dark");
+        icon.className = "fa-solid fa-sun text-lg text-amber-400";
       }
     }
 
-    function promptLogin() {
-      Swal.fire({
-        title: "เข้าสู่ระบบ",
-        html: `
-          <input id="swalId" class="swal2-input text-xs" placeholder="รหัสประจำตัว">
-          <input id="swalName" class="swal2-input text-xs" placeholder="ชื่อ - นามสกุล">
-        `,
-        allowOutsideClick: false,
-        confirmButtonText: "เข้าสู่ระบบ",
-        confirmButtonColor: "#E66695",
-        preConfirm: async () => {
-          const userId = document.getElementById("swalId").value.trim();
-          const fullName = document.getElementById("swalName").value.trim();
-          if (!userId || !fullName) return Swal.showValidationMessage("กรุณากรอกข้อมูลให้ครบถ้วน");
+    function toggleMenuDrawer() {
+      document.getElementById("menuDrawerContent").classList.toggle("hidden");
+      document.getElementById("menuDrawerIcon").classList.toggle("rotate-180");
+    }
 
-          Swal.showLoading();
-          const res = await fetch(GAS_API_URL, {
-            method: "POST",
-            body: JSON.stringify({ action: "checkLogin", userId, fullName })
-          });
-          const data = await res.json();
-          if (data.success) {
-            currentUser = data.userData;
-            localStorage.setItem("app_user", JSON.stringify(currentUser));
-            return true;
-          } else {
-            Swal.showValidationMessage(data.message || "ข้อมูลไม่ถูกต้อง");
-            return false;
-          }
-        }
-      }).then((res) => {
-        if (res.isConfirmed) {
-          renderUserHeader();
-          loadMenus();
-          loadPosts();
-        }
+    function formatTextWithLinks(text) {
+      if (!text) return "";
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      return text.replace(urlRegex, url => `<a href="${url}" target="_blank" class="text-yruPink font-semibold underline hover:text-yruPinkHover break-all">${url}</a>`);
+    }
+
+    function openImageModal(imgSrc) {
+      Swal.fire({
+        imageUrl: imgSrc,
+        imageAlt: 'Preview Image',
+        showConfirmButton: false,
+        showCloseButton: true,
+        background: 'rgba(0, 0, 0, 0.85)',
+        customClass: { image: 'max-h-[85vh] rounded-lg object-contain' }
       });
     }
 
-    function logout() {
-      localStorage.removeItem("app_user");
-      location.reload();
+    async function handleLogin() {
+      const userId = document.getElementById("loginUserId").value.trim();
+      const fullName = document.getElementById("loginFullName").value.trim();
+      if (!userId || !fullName) return Swal.fire("แจ้งเตือน", "กรุณากรอกรหัสประจำตัวและชื่อ-นามสกุล", "warning");
+
+      Swal.showLoading();
+      const res = await fetch(GAS_API_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "checkLogin", userId, fullName })
+      });
+      const data = await res.json();
+      Swal.close();
+
+      if (data.success) {
+        currentUser = data.userData;
+        localStorage.setItem("app_user", JSON.stringify(currentUser));
+        showDashboard();
+      } else {
+        Swal.fire("ข้อผิดพลาด", data.message, "error");
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById("loginView").classList.add("hidden");
+      document.getElementById("dashboardView").classList.remove("hidden");
+      document.getElementById("navLogoutBtn").classList.remove("hidden");
+
+      renderUserHeader();
+
+      if (currentUser.role === 'ADMIN') {
+        document.getElementById("adminPanel").classList.remove("hidden");
+        document.getElementById("serviceMenuSection").classList.add("hidden");
+        document.getElementById("sidebarUserMenuSection").classList.add("hidden");
+      } else {
+        loadMenus();
+      }
+
+      loadPosts();
     }
 
     function renderUserHeader() {
-      const avatar = currentUser.avatar || DEFAULT_AVATAR;
-      document.getElementById("navAvatar").src = avatar;
-      document.getElementById("createPostAvatar").src = avatar;
-      document.getElementById("navUserName").textContent = currentUser.name;
+      const avatarSrc = currentUser.avatar || DEFAULT_AVATAR;
+      document.getElementById("navUserArea").innerHTML = `
+        <button onclick="openUserProfileModal()" class="flex items-center gap-2 bg-pink-50 dark:bg-slate-700 hover:bg-pink-100 p-1.5 pr-3 rounded-full transition border border-pink-200 dark:border-slate-600">
+          <img src="${avatarSrc}" class="w-7 h-7 rounded-full object-cover border border-yruPink" />
+          <span class="text-xs font-bold text-yruPink">${currentUser.name}</span>
+        </button>
+      `;
     }
 
-    // Modal แก้ไขข้อมูลส่วนตัว
     function openUserProfileModal() {
       const avatarSrc = currentUser.avatar || DEFAULT_AVATAR;
       Swal.fire({
-        title: "แก้ไขข้อมูลส่วนตัว",
+        title: "ข้อมูลโปรไฟล์ส่วนตัว",
         html: `
           <div class="space-y-3 text-left text-xs">
             <div class="text-center">
@@ -183,42 +296,27 @@
               <input type="file" id="editAvatarFile" accept="image/*" onchange="previewImage(this, 'profilePreviewImg')" class="text-[11px] text-slate-500">
             </div>
             <div>
-              <label class="font-semibold text-slate-600 dark:text-slate-300">รหัสประจำตัว</label>
-              <input type="text" value="${currentUser.id}" disabled class="w-full p-2 bg-slate-100 dark:bg-slate-700 border dark:border-slate-600 rounded mt-1 text-slate-500">
+              <label class="font-semibold text-slate-500">รหัสประจำตัว</label>
+              <input type="text" value="${currentUser.id}" disabled class="w-full p-2 bg-slate-100 border rounded mt-1">
             </div>
             <div>
-              <label class="font-semibold text-slate-600 dark:text-slate-300">ชื่อ - นามสกุล <span class="text-rose-500">*</span></label>
-              <input type="text" id="editFullName" value="${currentUser.name || ''}" class="w-full p-2 border dark:bg-slate-700 dark:border-slate-600 rounded mt-1 focus:outline-none focus:border-yruPink" placeholder="กรอกชื่อ-นามสกุล">
-            </div>
-            <div>
-              <label class="font-semibold text-slate-600 dark:text-slate-300">เบอร์โทรศัพท์</label>
-              <input type="text" id="editPhone" value="${currentUser.phone || ''}" class="w-full p-2 border dark:bg-slate-700 dark:border-slate-600 rounded mt-1 focus:outline-none focus:border-yruPink" placeholder="กรอกเบอร์โทรศัพท์">
+              <label class="font-semibold text-slate-500">ชื่อ-นามสกุล</label>
+              <input type="text" value="${currentUser.name}" disabled class="w-full p-2 bg-slate-100 border rounded mt-1">
             </div>
           </div>
         `,
         showCancelButton: true,
-        confirmButtonText: "บันทึกข้อมูล",
+        confirmButtonText: "บันทึกรูปโปรไฟล์",
         confirmButtonColor: "#E66695",
-        cancelButtonText: "ยกเลิก",
         preConfirm: async () => {
-          const newName = document.getElementById("editFullName").value.trim();
-          const newPhone = document.getElementById("editPhone").value.trim();
           const fileInput = document.getElementById("editAvatarFile").files[0];
+          if (!fileInput) return true;
 
-          if (!newName) {
-            Swal.showValidationMessage("กรุณากรอกชื่อ-นามสกุล");
-            return false;
-          }
-
-          let avatarBase64 = "", avatarName = "";
-          if (fileInput) {
-            avatarBase64 = await new Promise(r => {
-              const reader = new FileReader();
-              reader.onload = () => r(reader.result);
-              reader.readAsDataURL(fileInput);
-            });
-            avatarName = fileInput.name;
-          }
+          const avatarBase64 = await new Promise(r => {
+            const reader = new FileReader();
+            reader.onload = () => r(reader.result);
+            reader.readAsDataURL(fileInput);
+          });
 
           Swal.showLoading();
           const res = await fetch(GAS_API_URL, {
@@ -226,89 +324,83 @@
             body: JSON.stringify({
               action: "updateUserProfile",
               userId: currentUser.id,
-              fullName: newName,
-              phone: newPhone,
+              currentAvatar: currentUser.avatar,
               avatarBase64: avatarBase64,
-              avatarName: avatarName
+              avatarName: fileInput.name
             })
           });
           const data = await res.json();
-
           if (data.success) {
-            currentUser = data.userData;
+            currentUser.avatar = data.avatarUrl;
             localStorage.setItem("app_user", JSON.stringify(currentUser));
             renderUserHeader();
-            loadPosts();
-          } else {
-            Swal.showValidationMessage(data.message || "บันทึกไม่สำเร็จ");
-            return false;
           }
         }
       });
     }
 
-    // Modal สร้างโพสต์ใหม่
-    function openCreatePostModal() {
-      Swal.fire({
-        title: "สร้างโพสต์ข่าวสาร",
-        html: `
-          <div class="space-y-3 text-left text-xs">
-            <textarea id="modalPostContent" rows="3" class="w-full p-2 border rounded focus:border-yruPink dark:bg-slate-700" placeholder="พิมพ์ข้อความที่ต้องการสื่อสาร..."></textarea>
-            <div>
-              <label class="block font-semibold mb-1">หมวดหมู่</label>
-              <select id="modalPostCategory" class="w-full p-2 border rounded dark:bg-slate-700">
-                <option value="ทั่วไป">ทั่วไป</option>
-                <option value="ข่าวประกาศ">ข่าวประกาศ</option>
-                <option value="กิจกรรม">กิจกรรม</option>
-              </select>
-            </div>
-            <div>
-              <label class="block font-semibold mb-1">แนบรูปภาพ</label>
-              <input type="file" id="modalPostImage" accept="image/*" onchange="previewImage(this, 'postImgPreview')" class="w-full text-xs">
-              <img id="postImgPreview" class="hidden mt-2 w-full max-h-48 object-cover rounded-lg border" />
-            </div>
-          </div>
-        `,
-        showCancelButton: true,
-        confirmButtonText: "โพสต์",
-        confirmButtonColor: "#E66695",
-        cancelButtonText: "ยกเลิก",
-        preConfirm: async () => {
-          const content = document.getElementById("modalPostContent").value.trim();
-          if (!content) return Swal.showValidationMessage("กรุณากรอกข้อความ");
-
-          const category = document.getElementById("modalPostCategory").value;
-          const imageFile = document.getElementById("modalPostImage").files[0];
-
-          let imageBase64 = "", imageName = "";
-          if (imageFile) {
-            imageBase64 = await new Promise(r => {
-              const reader = new FileReader();
-              reader.onload = () => r(reader.result);
-              reader.readAsDataURL(imageFile);
-            });
-            imageName = imageFile.name;
-          }
-
-          Swal.showLoading();
-          await fetch(GAS_API_URL, {
-            method: "POST",
-            body: JSON.stringify({
-              action: "createPost",
-              userId: currentUser.id,
-              authorName: currentUser.name,
-              content, category, imageBase64, imageName
-            })
-          });
+    function previewImage(input, targetImgId) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const target = document.getElementById(targetImgId);
+          target.src = e.target.result;
+          target.classList.remove('hidden');
         }
-      }).then((res) => { if (res.isConfirmed) loadPosts(); });
+        reader.readAsDataURL(input.files[0]);
+      }
     }
 
-    // Load News Posts Feed
-    async function loadPosts() {
+    async function loadMenus() {
+      const grid = document.getElementById("dynamicMenuGrid");
+      const sidebarNav = document.getElementById("sidebarUserMenus");
+
       const res = await fetch(GAS_API_URL, {
         method: "POST",
-        body: JSON.stringify({ action: "getPosts", categoryFilter: currentCategoryFilter })
+        body: JSON.stringify({ action: "getMenus", userRole: currentUser.role })
+      });
+      const data = await res.json();
+
+      if (data.success && data.menus.length > 0) {
+        grid.innerHTML = data.menus.map(menu => renderMenuButton(menu, false)).join('');
+        sidebarNav.innerHTML = data.menus.map(menu => renderMenuButton(menu, true)).join('');
+      } else {
+        grid.innerHTML = "<p class='text-xs text-slate-400 col-span-full'>ไม่มีเมนูสำหรับสิทธิ์ของคุณ</p>";
+      }
+    }
+
+    function renderMenuButton(menu, isSidebar) {
+      let link = menu.url;
+      if (!menu.isDirect) {
+        const sep = link.includes('?') ? '&' : '?';
+        link += `${sep}id=${encodeURIComponent(currentUser.id)}`;
+      }
+
+      if (isSidebar) {
+        return `
+          <a href="${link}" target="_blank" onclick="toggleSidebar()" class="flex items-center gap-3 px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-yruPink hover:bg-pink-50 dark:hover:bg-slate-700 rounded-lg text-xs font-medium transition">
+            <i class="${menu.icon || 'fa-solid fa-link'} text-yruPink w-4"></i> ${menu.name}
+          </a>
+        `;
+      }
+
+      return `
+        <a href="${link}" target="_blank" class="flex flex-col items-center p-3 bg-slate-50 dark:bg-slate-700/50 hover:bg-pink-50 border border-slate-200 dark:border-slate-600 hover:border-yruPink rounded-xl transition group text-center">
+          <div class="w-10 h-10 rounded-lg bg-pink-100 text-yruPink flex items-center justify-center text-lg mb-1.5 group-hover:bg-yruPink group-hover:text-white transition">
+            <i class="${menu.icon || 'fa-solid fa-link'}"></i>
+          </div>
+          <span class="font-bold text-xs text-slate-700 dark:text-slate-200 group-hover:text-yruPink">${menu.name}</span>
+        </a>
+      `;
+    }
+
+    async function loadPosts() {
+      const feed = document.getElementById("newsFeed");
+      if (loadedPostsData.length === 0) feed.innerHTML = "<p class='text-xs text-slate-400 text-center py-4'>กำลังโหลดข่าวสาร...</p>";
+
+      const res = await fetch(GAS_API_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "getPosts", categoryFilter: currentFilter })
       });
       const data = await res.json();
 
@@ -319,65 +411,74 @@
     }
 
     function renderPostsFeed() {
-      const container = document.getElementById("postsFeedContainer");
+      const feed = document.getElementById("newsFeed");
       if (loadedPostsData.length === 0) {
-        container.innerHTML = `<div class="text-center py-10 text-slate-400 text-xs">ยังไม่มีข่าวสารในหมวดหมู่นี้</div>`;
+        feed.innerHTML = "<p class='text-xs text-slate-400 text-center py-4'>ไม่พบข่าวสาร</p>";
         return;
       }
 
-      container.innerHTML = loadedPostsData.map(post => {
+      feed.innerHTML = loadedPostsData.map(post => {
         const isLiked = (post.likes || []).includes(currentUser.id);
         const canManage = post.userId == currentUser.id || ['ADMIN', 'TEACHER'].includes((currentUser.role || '').toUpperCase());
-        const authorAvatar = post.authorAvatar || DEFAULT_AVATAR;
+        const postAvatar = post.authorAvatar || DEFAULT_AVATAR;
 
         return `
-          <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 space-y-3">
-            <!-- Author Header -->
-            <div class="flex items-center justify-between">
+          <div id="postCard_${post.postId}" class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
+           
+            <div class="flex justify-between items-center">
               <div class="flex items-center gap-2.5">
-                <img src="${authorAvatar}" class="w-9 h-9 rounded-full object-cover border border-yruPink" />
+                <img src="${postAvatar}" class="w-9 h-9 rounded-full object-cover border border-yruPink" />
                 <div>
-                  <h4 class="font-bold text-xs leading-none">${post.authorName}</h4>
-                  <span class="text-[10px] text-slate-400">${post.createdAt} • <span class="text-yruPink font-semibold">${post.category}</span></span>
+                  <h4 class="font-bold text-slate-800 dark:text-slate-100 text-xs">${post.authorName}</h4>
+                  <p class="text-[10px] text-slate-400">${post.createdAt}</p>
                 </div>
               </div>
-              ${canManage ? `
-                <div class="flex gap-2 text-slate-400 text-xs">
-                  <button onclick="editPost('${post.postId}', \`${post.content.replace(/`/g, '\\`')}\`, '${post.category}')" class="hover:text-yruPink"><i class="fa-solid fa-pen-to-square"></i></button>
-                  <button onclick="deletePost('${post.postId}')" class="hover:text-rose-500"><i class="fa-solid fa-trash-can"></i></button>
-                </div>
-              ` : ''}
+              <div class="flex items-center gap-2">
+                <span class="bg-pink-100 text-yruPink text-[10px] px-2.5 py-0.5 rounded-full font-bold">${post.category}</span>
+                ${canManage ? `
+                  <button onclick="editPostModal('${post.postId}')" class="text-xs text-slate-400 hover:text-yruPink"><i class="fa-solid fa-pen-to-square"></i></button>
+                  <button onclick="deletePostConfirm('${post.postId}')" class="text-xs text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash-can"></i></button>
+                ` : ''}
+              </div>
             </div>
 
-            <!-- Content -->
-            <p class="text-xs leading-relaxed whitespace-pre-line">${formatTextWithLinks(post.content)}</p>
-            ${post.imageUrl ? `<img src="${post.imageUrl}" onclick="openImageModal('${post.imageUrl}')" class="w-full max-h-80 object-cover rounded-lg border cursor-pointer hover:opacity-95 transition" />` : ''}
+            <p class="text-xs text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed">${formatTextWithLinks(post.content)}</p>
 
-            <!-- Post Actions -->
-            <div class="flex items-center justify-between text-xs pt-2 border-t dark:border-slate-700/50 text-slate-500">
-              <button onclick="toggleLikePost('${post.postId}')" class="flex items-center gap-1.5 ${isLiked ? 'text-rose-500 font-bold' : 'hover:text-rose-500'}">
-                <i class="fa-${isLiked ? 'solid' : 'regular'} fa-heart text-sm"></i>
-                <span>${(post.likes || []).length} ถูกใจ</span>
+            ${post.imageUrl ? `
+              <img src="${post.imageUrl}" onclick="openImageModal('${post.imageUrl}')" class="w-full h-auto rounded-xl border max-h-96 object-cover cursor-pointer hover:opacity-95 transition" />
+            ` : ''}
+           
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
+              <button onclick="smoothToggleLike('${post.postId}')" class="flex items-center gap-1.5 ${isLiked ? 'text-rose-500 font-bold' : 'hover:text-rose-500'} transition">
+                <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                <span id="likeCount_${post.postId}">${(post.likes || []).length} ถูกใจ</span>
               </button>
-              <span id="commentCount_${post.postId}" class="text-[11px] text-slate-400">${(post.comments || []).length} ความคิดเห็น</span>
+              <span class="text-slate-400" id="commentCount_${post.postId}">${(post.comments || []).length} ความคิดเห็น</span>
             </div>
 
-            <!-- Comment Input -->
-            <div class="pt-2 flex gap-2 items-center">
-              <input type="text" id="commentInput_${post.postId}" class="flex-1 p-2 text-xs border rounded-full focus:outline-none focus:border-yruPink dark:bg-slate-700/50 dark:border-slate-600" placeholder="เขียนความคิดเห็น...">
-              <button onclick="smoothSubmitComment('${post.postId}')" class="bg-yruPink text-white px-3 py-1.5 rounded-full text-xs font-bold hover:bg-yruPink/90">ส่ง</button>
-            </div>
-
-            <!-- Comments Tree -->
-            <div id="commentsContainer_${post.postId}" class="space-y-2 pt-2">
+            <div id="commentsContainer_${post.postId}" class="space-y-2 pt-2 border-t border-slate-50 dark:border-slate-700">
               ${renderCommentsTree(post)}
             </div>
+
+            <div class="space-y-2 pt-2">
+              <div class="flex gap-2 items-center">
+                <img src="${currentUser.avatar || DEFAULT_AVATAR}" class="w-7 h-7 rounded-full object-cover border" />
+                <input type="text" id="commentInput_${post.postId}" class="flex-1 p-2 text-xs border dark:bg-slate-700 dark:border-slate-600 rounded-lg focus:outline-none focus:border-yruPink" placeholder="เขียนความคิดเห็น...">
+                <label class="cursor-pointer text-slate-400 hover:text-yruPink px-1">
+                  <i class="fa-solid fa-image text-base"></i>
+                  <input type="file" id="commentImg_${post.postId}" accept="image/*" onchange="previewImage(this, 'commentImgPreview_${post.postId}')" class="hidden">
+                </label>
+                <button onclick="smoothSubmitComment('${post.postId}')" class="bg-yruPink hover:bg-yruPinkHover text-white text-xs px-3 py-1.5 rounded-lg font-bold transition">ส่ง</button>
+              </div>
+              <img id="commentImgPreview_${post.postId}" class="hidden w-16 h-16 object-cover rounded-lg border border-yruPink ml-9" />
+            </div>
+
           </div>
         `;
       }).join('');
     }
 
-    // Comment Tree Render (รวมฟีเจอร์ถังขยะ + ปุ่มดินสอแก้ไขความคิดเห็น)
+    <!-- Facebook-style Comment Tree Render (ปรับเพิ่มไอคอนแก้ไข และถังขยะ) -->
     function renderCommentsTree(post, parentId = null) {
       const comments = (post.comments || []).filter(c => (c.parentId || null) === parentId);
       if (comments.length === 0) return '';
@@ -394,10 +495,9 @@
               <div class="bg-slate-100 dark:bg-slate-700/60 p-2.5 rounded-2xl inline-block max-w-full">
                 <strong class="text-yruPink font-bold block text-[11px]">${c.authorName}</strong>
                 <span class="text-slate-700 dark:text-slate-200 whitespace-pre-line">${formatTextWithLinks(c.text)}</span>
-                ${c.imageUrl ? `<img src="${c.imageUrl}" onclick="openImageModal('${c.imageUrl}')" class="w-32 h-32 object-cover rounded-lg border mt-1 cursor-pointer hover:opacity-90 transition" />` : ''}
+                ${c.imageUrl ? `<img src="${c.imageUrl}" onclick="openImageModal('${c.imageUrl}')" class="w-32 h-32 object-cover rounded-lg border mt-1 cursor-pointer" />` : ''}
               </div>
 
-              <!-- Action Bar: Like, Reply, Edit (Pencil), Delete (Trash) -->
               <div class="flex items-center gap-3 text-[10px] text-slate-400 pl-2">
                 <span>${c.time}</span>
                 <button onclick="smoothToggleLikeComment('${post.postId}', '${c.commentId}')" class="${isLiked ? 'text-rose-500 font-bold' : 'hover:text-rose-500'}">
@@ -415,13 +515,11 @@
                 ` : ''}
               </div>
 
-              <!-- Reply Input Box -->
               <div id="replyBox_${c.commentId}" class="hidden flex gap-2 items-center pt-1 pl-2">
                 <input type="text" id="replyInput_${c.commentId}" class="flex-1 p-1 text-[11px] border rounded focus:outline-none focus:border-yruPink dark:bg-slate-700" placeholder="ตอบกลับ ${c.authorName}...">
                 <button onclick="smoothSubmitComment('${post.postId}', '${c.commentId}')" class="bg-yruPink text-white text-[10px] px-2.5 py-1 rounded font-bold">ส่ง</button>
               </div>
 
-              <!-- Nested Sub-comments -->
               ${renderCommentsTree(post, c.commentId)}
             </div>
           </div>
@@ -429,23 +527,68 @@
       }).join('');
     }
 
-    // Comment Actions (Submit, Edit, Delete, Like)
-    async function smoothSubmitComment(postId, parentId = null) {
-      const inputId = parentId ? `replyInput_${parentId}` : `commentInput_${postId}`;
-      const inputEl = document.getElementById(inputId);
-      const text = inputEl.value.trim();
-      if (!text) return;
+    function toggleReplyBox(commentId) {
+      document.getElementById(`replyBox_${commentId}`).classList.toggle('hidden');
+    }
 
-      inputEl.value = "";
+    async function smoothToggleLike(postId) {
+      const post = loadedPostsData.find(p => p.postId === postId);
+      if (!post) return;
+
+      if (!post.likes) post.likes = [];
+      const idx = post.likes.indexOf(currentUser.id);
+      if (idx > -1) post.likes.splice(idx, 1);
+      else post.likes.push(currentUser.id);
+
+      const countLabel = document.getElementById(`likeCount_${postId}`);
+      if (countLabel) countLabel.textContent = `${post.likes.length} ถูกใจ`;
+
+      fetch(GAS_API_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "toggleLike", postId, userId: currentUser.id })
+      });
+    }
+
+    async function smoothSubmitComment(postId, parentId = null) {
+      let input, imgInput;
+      if (parentId) {
+        input = document.getElementById(`replyInput_${parentId}`);
+      } else {
+        input = document.getElementById(`commentInput_${postId}`);
+        imgInput = document.getElementById(`commentImg_${postId}`);
+      }
+
+      const text = input.value.trim();
+      const imageFile = imgInput ? imgInput.files[0] : null;
+      if (!text && !imageFile) return;
+
+      let imageBase64 = "", imageName = "";
+      if (imageFile) {
+        imageBase64 = await new Promise(r => {
+          const reader = new FileReader();
+          reader.onload = () => r(reader.result);
+          reader.readAsDataURL(imageFile);
+        });
+        imageName = imageFile.name;
+      }
+
+      input.value = "";
+      if (imgInput) {
+        imgInput.value = "";
+        const preview = document.getElementById(`commentImgPreview_${postId}`);
+        if (preview) preview.classList.add("hidden");
+      }
+
       const res = await fetch(GAS_API_URL, {
         method: "POST",
         body: JSON.stringify({
           action: "addComment", postId, parentId,
-          commentText: text, userId: currentUser.id,
-          authorName: currentUser.name, authorAvatar: currentUser.avatar
+          commentText: text, imageBase64, imageName,
+          userId: currentUser.id, authorName: currentUser.name, authorAvatar: currentUser.avatar
         })
       });
       const data = await res.json();
+
       if (data.success) {
         const post = loadedPostsData.find(p => p.postId === postId);
         post.comments = data.comments;
@@ -454,7 +597,7 @@
       }
     }
 
-    // ฟังก์ชันเปิด SweetAlert แก้ไขความคิดเห็น
+    // ฟังก์ชันแก้ไขความคิดเห็น
     function smoothEditCommentPrompt(postId, commentId, currentText) {
       Swal.fire({
         title: "แก้ไขความคิดเห็น",
@@ -485,9 +628,9 @@
       });
     }
 
-    // ฟังก์ชันลบความคิดเห็น (สั่งลบไฟล์รูปใน Drive จากฝั่งหลังบ้าน)
+    // ฟังก์ชันลบความคิดเห็น (ลบรูปภาพใน Drive อัตโนมัติฝั่ง Backend)
     async function smoothDeleteComment(postId, commentId) {
-      if (confirm("ยืนยันการลบความคิดเห็นนี้? (หากมีรูปภาพจะถูกลบออกจากไดรฟ์ด้วย)")) {
+      if (confirm("ยืนยันการลบความคิดเห็นนี้? (หากมีรูปภาพในคอมเมนต์ จะถูกลบออกจาก Google Drive ด้วย)")) {
         const res = await fetch(GAS_API_URL, {
           method: "POST",
           body: JSON.stringify({
@@ -496,6 +639,7 @@
           })
         });
         const data = await res.json();
+
         if (data.success) {
           const post = loadedPostsData.find(p => p.postId === postId);
           post.comments = data.comments;
@@ -511,6 +655,7 @@
         body: JSON.stringify({ action: "toggleLikeComment", postId, commentId, userId: currentUser.id })
       });
       const data = await res.json();
+
       if (data.success) {
         const post = loadedPostsData.find(p => p.postId === postId);
         post.comments = data.comments;
@@ -518,102 +663,310 @@
       }
     }
 
-    async function toggleLikePost(postId) {
-      const res = await fetch(GAS_API_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "toggleLike", postId, userId: currentUser.id })
-      });
-      const data = await res.json();
-      if (data.success) loadPosts();
-    }
+    function openCreatePostModal() {
+      Swal.fire({
+        title: "สร้างโพสต์ข่าวสาร",
+        html: `
+          <div class="space-y-3 text-left text-xs">
+            <textarea id="modalPostContent" rows="3" class="w-full p-2 border rounded" placeholder="พิมพ์ข้อความ..."></textarea>
+            <div>
+              <label class="block font-semibold mb-1">หมวดหมู่</label>
+              <select id="modalPostCategory" class="w-full p-2 border rounded">
+                <option value="ทั่วไป">ทั่วไป</option>
+                <option value="ข่าวประกาศ">ข่าวประกาศ</option>
+                <option value="กิจกรรม">กิจกรรม</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">แนบรูปภาพ</label>
+              <input type="file" id="modalPostImage" accept="image/*" onchange="previewImage(this, 'postImgPreview')" class="w-full">
+              <img id="postImgPreview" class="hidden mt-2 w-full max-h-48 object-cover rounded-lg border" />
+            </div>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: "โพสต์",
+        confirmButtonColor: "#E66695",
+        preConfirm: async () => {
+          const content = document.getElementById("modalPostContent").value.trim();
+          if (!content) return Swal.showValidationMessage("กรุณากรอกข้อความ");
 
-    async function deletePost(postId) {
-      if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบโพสต์นี้? (รูปภาพทั้งหมดในโพสต์จะถูกลบในไดรฟ์)")) {
-        const res = await fetch(GAS_API_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "deletePost", postId, userId: currentUser.id, userRole: currentUser.role })
-        });
-        const data = await res.json();
-        if (data.success) loadPosts();
-      }
-    }
+          const category = document.getElementById("modalPostCategory").value;
+          const imageFile = document.getElementById("modalPostImage").files[0];
 
-    // Load Sidebar Menus (ดึงตาม Role: ADMIN, TEACHER, STUDENT, ALL)
-    async function loadMenus() {
-      const res = await fetch(GAS_API_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "getMenus", userRole: currentUser.role })
-      });
-      const data = await res.json();
+          let imageBase64 = "", imageName = "";
+          if (imageFile) {
+            imageBase64 = await new Promise(r => {
+              const reader = new FileReader();
+              reader.onload = () => r(reader.result);
+              reader.readAsDataURL(imageFile);
+            });
+            imageName = imageFile.name;
+          }
 
-      if (data.success) {
-        const menuContainer = document.getElementById("sidebarMenuContainer");
-        menuContainer.innerHTML = data.menus.map(m => `
-          <a href="${m.url}" target="${m.openMode === 'TAB' ? '_blank' : '_self'}" class="flex items-center gap-3 p-2.5 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
-            <i class="${m.icon} text-yruPink text-base w-5 text-center"></i>
-            <span>${m.name}</span>
-          </a>
-        `).join('');
-      }
-    }
-
-    // UI Helpers
-    function toggleSidebar() {
-      const sidebar = document.getElementById("sidebar");
-      const overlay = document.getElementById("sidebarOverlay");
-      sidebar.classList.toggle("-translate-x-full");
-      overlay.classList.toggle("hidden");
-      setTimeout(() => overlay.classList.toggle("opacity-0"), 10);
-    }
-
-    function filterCategory(cat) {
-      currentCategoryFilter = cat;
-      document.querySelectorAll(".cat-btn").forEach(btn => {
-        btn.classList.remove("bg-yruPink", "text-white", "shadow-sm");
-        btn.classList.add("bg-white", "dark:bg-slate-800");
-      });
-      event.target.classList.add("bg-yruPink", "text-white", "shadow-sm");
-      loadPosts();
-    }
-
-    function toggleReplyBox(commentId) {
-      const box = document.getElementById(`replyBox_${commentId}`);
-      box.classList.toggle("hidden");
-    }
-
-    function previewImage(input, previewId) {
-      const preview = document.getElementById(previewId);
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = e => {
-          preview.src = e.target.result;
-          preview.classList.remove("hidden");
+          Swal.showLoading();
+          await fetch(GAS_API_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              action: "createPost",
+              userId: currentUser.id, authorName: currentUser.name, authorAvatar: currentUser.avatar,
+              content, category, imageBase64, imageName
+            })
+          });
         }
-        reader.readAsDataURL(input.files[0]);
+      }).then((res) => { if (res.isConfirmed) loadPosts(); });
+    }
+
+    function editPostModal(postId) {
+      const post = loadedPostsData.find(p => p.postId === postId);
+      if (!post) return;
+
+      Swal.fire({
+        title: "แก้ไขโพสต์",
+        html: `
+          <div class="space-y-3 text-left text-xs">
+            <textarea id="editPostContent" rows="3" class="w-full p-2 border rounded">${post.content}</textarea>
+            <select id="editPostCategory" class="w-full p-2 border rounded">
+              <option value="ทั่วไป" ${post.category==='ทั่วไป'?'selected':''}>ทั่วไป</option>
+              <option value="ข่าวประกาศ" ${post.category==='ข่าวประกาศ'?'selected':''}>ข่าวประกาศ</option>
+              <option value="กิจกรรม" ${post.category==='กิจกรรม'?'selected':''}>กิจกรรม</option>
+            </select>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: "บันทึก",
+        confirmButtonColor: "#E66695",
+        preConfirm: async () => {
+          const content = document.getElementById("editPostContent").value.trim();
+          const category = document.getElementById("editPostCategory").value;
+
+          await fetch(GAS_API_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "updatePost", postId, content, category, userId: currentUser.id, userRole: currentUser.role })
+          });
+        }
+      }).then((res) => { if (res.isConfirmed) loadPosts(); });
+    }
+
+    async function deletePostConfirm(postId) {
+      if (confirm("คุณต้องการลบโพสต์นี้ใช่หรือไม่?")) {
+        await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "deletePost", postId, userId: currentUser.id, userRole: currentUser.role }) });
+        loadPosts();
       }
     }
 
-    function openImageModal(url) {
-      Swal.fire({ imageUrl: url, imageAlt: 'รูปภาพ', showConfirmButton: false, width: 'auto' });
+    // ADMIN FULL CRUD MODALS
+    async function openUsersCRUDModal() {
+      Swal.showLoading();
+      const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getUsersList" }) });
+      const data = await res.json();
+      Swal.close();
+
+      const rowsHtml = data.users.map(u => `
+        <tr class="border-b text-xs text-left">
+          <td class="p-2 font-bold">${u[0]}</td>
+          <td class="p-2">${u[1]}</td>
+          <td class="p-2">${u[2]}</td>
+          <td class="p-2">${u[3]}</td>
+          <td class="p-2 font-semibold text-yruPink">${u[4]}</td>
+          <td class="p-2"><img src="${u[5]||DEFAULT_AVATAR}" class="w-6 h-6 rounded-full object-cover" /></td>
+          <td class="p-2">
+            <button onclick="editUserPrompt('${u[0]}', '${u[1]}', '${u[2]}', '${u[3]}', '${u[4]}', '${u[5]||''}')" class="text-blue-500 font-bold mr-2">แก้ไข</button>
+            <button onclick="deleteUserConfirm('${u[0]}')" class="text-rose-500 font-bold">ลบ</button>
+          </td>
+        </tr>
+      `).join('');
+
+      Swal.fire({
+        title: "จัดการผู้ใช้งาน (Users Full CRUD)",
+        html: `
+          <div class="text-right mb-3">
+            <button onclick="editUserPrompt('', '', '', 'Active', 'STUDENT', '')" class="bg-emerald-600 text-white text-xs px-3 py-1.5 rounded font-bold">+ เพิ่มผู้ใช้งาน</button>
+          </div>
+          <div class="max-h-80 overflow-y-auto">
+            <table class="w-full">
+              <thead><tr class="bg-slate-100 text-xs text-left"><th class="p-2">ID</th><th class="p-2">ชื่อ</th><th class="p-2">เบอร์</th><th class="p-2">สถานะ</th><th class="p-2">Role</th><th class="p-2">Avatar</th><th class="p-2">จัดการ</th></tr></thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
+          </div>
+        `,
+        width: '90%', showConfirmButton: false, showCloseButton: true
+      });
     }
 
-    function formatTextWithLinks(text) {
-      const urlRegex = /(https?:\/\/[^\s]+)/g;
-      return text.replace(urlRegex, url => `<a href="${url}" target="_blank" class="text-blue-500 underline hover:text-blue-600 break-all">${url}</a>`);
+    function editUserPrompt(id, name, phone, status, role, avatar) {
+      Swal.fire({
+        title: id ? "แก้ไขข้อมูลผู้ใช้ทุกช่อง" : "เพิ่มผู้ใช้ใหม่",
+        html: `
+          <div class="space-y-2 text-left text-xs">
+            <div><label class="font-bold">User ID</label><input type="text" id="uId" value="${id}" ${id ? 'disabled' : ''} class="w-full p-2 border rounded"></div>
+            <div><label class="font-bold">ชื่อ-นามสกุล</label><input type="text" id="uName" value="${name}" class="w-full p-2 border rounded"></div>
+            <div><label class="font-bold">เบอร์โทรศัพท์</label><input type="text" id="uPhone" value="${phone}" class="w-full p-2 border rounded"></div>
+            <div><label class="font-bold">สถานะ</label><input type="text" id="uStatus" value="${status}" class="w-full p-2 border rounded"></div>
+            <div><label class="font-bold">Role</label>
+              <select id="uRole" class="w-full p-2 border rounded">
+                <option value="STUDENT" ${role==='STUDENT'?'selected':''}>STUDENT</option>
+                <option value="TEACHER" ${role==='TEACHER'?'selected':''}>TEACHER</option>
+                <option value="ADMIN" ${role==='ADMIN'?'selected':''}>ADMIN</option>
+              </select>
+            </div>
+            <div><label class="font-bold">Avatar URL</label><input type="text" id="uAvatar" value="${avatar}" class="w-full p-2 border rounded"></div>
+          </div>
+        `,
+        showCancelButton: true,
+        preConfirm: async () => {
+          const userData = [
+            document.getElementById("uId").value.trim(),
+            document.getElementById("uName").value.trim(),
+            document.getElementById("uPhone").value.trim(),
+            document.getElementById("uStatus").value.trim(),
+            document.getElementById("uRole").value,
+            document.getElementById("uAvatar").value.trim()
+          ];
+          await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "saveUserAdmin", userData }) });
+        }
+      }).then(() => openUsersCRUDModal());
     }
 
-    function initTheme() {
-      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-        document.getElementById("themeIcon").className = "fa-solid fa-sun text-yruYellow text-lg";
+    async function deleteUserConfirm(userId) {
+      if (confirm(`ยืนยันการลบผู้ใช้ ${userId}?`)) {
+        await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "deleteUser", userId }) });
+        openUsersCRUDModal();
       }
     }
 
-    function toggleDarkMode() {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
-      document.getElementById("themeIcon").className = isDark ? "fa-solid fa-sun text-yruYellow text-lg" : "fa-solid fa-moon text-lg";
+    async function openMenusCRUDModal() {
+      Swal.showLoading();
+      const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getMenusAdmin" }) });
+      const data = await res.json();
+      Swal.close();
+
+      const rowsHtml = data.menus.map(m => `
+        <tr class="border-b text-xs text-left">
+          <td class="p-2 font-bold">${m[0]}</td>
+          <td class="p-2">${m[1]}</td>
+          <td class="p-2"><i class="${m[2]}"></i></td>
+          <td class="p-2 max-w-xs truncate">${m[3]}</td>
+          <td class="p-2">${m[4]}</td>
+          <td class="p-2">${m[5]}</td>
+          <td class="p-2">${m[6]}</td>
+          <td class="p-2">
+            <button onclick="editMenuPrompt('${m[0]}', '${m[1]}', '${m[2]}', '${m[3]}', '${m[4]}', '${m[5]}', '${m[6]}')" class="text-blue-500 font-bold mr-2">แก้ไข</button>
+            <button onclick="deleteMenuConfirm('${m[0]}')" class="text-rose-500 font-bold">ลบ</button>
+          </td>
+        </tr>
+      `).join('');
+
+      Swal.fire({
+        title: "จัดการเมนูระบบ (Menus Full CRUD)",
+        html: `
+          <div class="text-right mb-3">
+            <button onclick="editMenuPrompt('M'+new Date().getTime(), '', 'fa-solid fa-link', '', 'TRUE', 'ALL', 'TAB')" class="bg-emerald-600 text-white text-xs px-3 py-1.5 rounded font-bold">+ เพิ่มเมนู</button>
+          </div>
+          <div class="max-h-80 overflow-y-auto">
+            <table class="w-full">
+              <thead><tr class="bg-slate-100 text-xs text-left"><th class="p-2">ID</th><th class="p-2">ชื่อ</th><th class="p-2">Icon</th><th class="p-2">URL</th><th class="p-2">Direct</th><th class="p-2">Role</th><th class="p-2">OpenMode</th><th class="p-2">จัดการ</th></tr></thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
+          </div>
+        `,
+        width: '95%', showConfirmButton: false, showCloseButton: true
+      });
     }
+
+    function editMenuPrompt(id, name, icon, url, direct, role, openMode) {
+      Swal.fire({
+        title: "แก้ไขข้อมูลเมนูทุกช่อง",
+        html: `
+          <div class="space-y-2 text-left text-xs">
+            <div><label class="font-bold">Menu ID</label><input type="text" id="mId" value="${id}" disabled class="w-full p-2 border rounded"></div>
+            <div><label class="font-bold">ชื่อเมนู</label><input type="text" id="mName" value="${name}" class="w-full p-2 border rounded"></div>
+            <div><label class="font-bold">Icon Class</label><input type="text" id="mIcon" value="${icon}" class="w-full p-2 border rounded"></div>
+            <div><label class="font-bold">URL Link</label><input type="text" id="mUrl" value="${url}" class="w-full p-2 border rounded"></div>
+            <div><label class="font-bold">isDirect (TRUE/FALSE)</label><input type="text" id="mDirect" value="${direct}" class="w-full p-2 border rounded"></div>
+            <div><label class="font-bold">Role (เช่น ALL, STUDENT, TEACHER, ADMIN)</label><input type="text" id="mRole" value="${role}" class="w-full p-2 border rounded"></div>
+            <div><label class="font-bold">OpenMode (TAB/MODAL)</label><input type="text" id="mOpenMode" value="${openMode}" class="w-full p-2 border rounded"></div>
+          </div>
+        `,
+        showCancelButton: true,
+        preConfirm: async () => {
+          const menuData = [
+            document.getElementById("mId").value.trim(),
+            document.getElementById("mName").value.trim(),
+            document.getElementById("mIcon").value.trim(),
+            document.getElementById("mUrl").value.trim(),
+            document.getElementById("mDirect").value.trim(),
+            document.getElementById("mRole").value.trim(),
+            document.getElementById("mOpenMode").value.trim()
+          ];
+          await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "saveMenuAdmin", menuData }) });
+        }
+      }).then(() => openMenusCRUDModal());
+    }
+
+    async function deleteMenuConfirm(menuId) {
+      if (confirm(`ยืนยันการลบเมนู ${menuId}?`)) {
+        await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "deleteMenu", menuId }) });
+        openMenusCRUDModal();
+      }
+    }
+
+    async function openPostsAuditModal() {
+      Swal.showLoading();
+      const res = await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "getPosts", categoryFilter: "ทั้งหมด" }) });
+      const data = await res.json();
+      Swal.close();
+
+      const rowsHtml = data.posts.map(p => `
+        <tr class="border-b text-xs text-left">
+          <td class="p-2 font-bold">${p.authorName}</td>
+          <td class="p-2 max-w-xs truncate">${p.content}</td>
+          <td class="p-2"><span class="bg-pink-100 text-yruPink px-2 py-0.5 rounded">${p.category}</span></td>
+          <td class="p-2">${p.createdAt}</td>
+          <td class="p-2">
+            <button onclick="adminDeletePost('${p.postId}')" class="text-rose-500 font-bold">ลบโพสต์</button>
+          </td>
+        </tr>
+      `).join('');
+
+      Swal.fire({
+        title: "ตารางตรวจสอบและลบโพสต์",
+        html: `
+          <div class="max-h-80 overflow-y-auto">
+            <table class="w-full">
+              <thead><tr class="bg-slate-100 text-xs text-left"><th class="p-2">ผู้โพสต์</th><th class="p-2">ข้อความ</th><th class="p-2">หมวดหมู่</th><th class="p-2">เวลา</th><th class="p-2">จัดการ</th></tr></thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
+          </div>
+        `,
+        width: '85%', showConfirmButton: false, showCloseButton: true
+      });
+    }
+
+    async function adminDeletePost(postId) {
+      if (confirm("แอดมินยืนยันการลบโพสต์นี้หรือไม่?")) {
+        await fetch(GAS_API_URL, { method: "POST", body: JSON.stringify({ action: "deletePost", postId, userId: currentUser.id, userRole: currentUser.role }) });
+        openPostsAuditModal();
+        loadPosts();
+      }
+    }
+
+    function filterNews(cat) { 
+      currentFilter = cat; 
+      document.querySelectorAll(".cat-btn").forEach(btn => {
+        if (btn.textContent.trim() === cat) {
+          btn.classList.add("bg-yruPink", "text-white");
+          btn.classList.remove("bg-white", "dark:bg-slate-800", "text-slate-600", "dark:text-slate-300");
+        } else {
+          btn.classList.remove("bg-yruPink", "text-white");
+          btn.classList.add("bg-white", "dark:bg-slate-800", "text-slate-600", "dark:text-slate-300");
+        }
+      });
+      loadPosts(); 
+    }
+    
+    function logout() { localStorage.removeItem("app_user"); location.reload(); }
+    function scrollToLogin() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
   </script>
 </body>
 </html>
