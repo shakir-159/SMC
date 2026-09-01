@@ -2,7 +2,7 @@
 <html lang="th" class="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ระบบออนไลน์ - SMC YRU</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -20,42 +20,50 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body { font-family: 'Sarabun', sans-serif; }
+    /* Scrollbar styling for smooth mobile scrolling */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .dark ::-webkit-scrollbar-thumb { background: #475569; }
   </style>
 </head>
-<body class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-200 min-h-screen flex flex-col justify-between relative overflow-x-hidden transition-colors">
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-200 min-h-screen flex flex-col justify-between relative overflow-x-hidden transition-colors antialiased">
 
   <!-- Header -->
-  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 px-4 py-3 shadow-sm">
-    <div class="max-w-4xl mx-auto flex justify-between items-center">
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 px-3 sm:px-4 py-2.5 sm:py-3 shadow-sm">
+    <div class="max-w-4xl mx-auto flex justify-between items-center gap-2">
       
-      <div class="flex items-center gap-3">
-        <button onclick="toggleSidebar()" class="text-slate-600 dark:text-slate-300 hover:text-yruPink focus:outline-none p-1">
-          <i class="fa-solid fa-bars text-xl"></i>
+      <!-- Brand & Hamburger -->
+      <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+        <button onclick="toggleSidebar()" class="text-slate-600 dark:text-slate-300 hover:text-yruPink focus:outline-none p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+          <i class="fa-solid fa-bars text-lg sm:text-xl"></i>
         </button>
         
         <!-- Header University Logo Container -->
         <div id="headerLogoContainer" class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-xs border border-amber-400 shadow-sm">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-xs border border-amber-400 shadow-sm shrink-0">
             <i class="fa-solid fa-graduation-cap"></i>
           </div>
-          <span class="font-bold text-xl text-yruPink tracking-tight">SMC-YRU</span>
+          <span class="font-bold text-lg sm:text-xl text-yruPink tracking-tight truncate">SMC-YRU</span>
         </div>
       </div>
 
-      <div class="flex items-center gap-2 md:gap-3">
+      <!-- Actions Right -->
+      <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
         
-        <button onclick="toggleDarkMode()" class="p-2 text-slate-500 dark:text-amber-400 hover:text-yruPink focus:outline-none">
-          <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+        <button onclick="toggleDarkMode()" class="p-1.5 sm:p-2 text-slate-500 dark:text-amber-400 hover:text-yruPink focus:outline-none rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+          <i id="themeIcon" class="fa-solid fa-moon text-base sm:text-lg"></i>
         </button>
 
         <!-- Notification Bell Container -->
         <div id="notiBellContainer" class="hidden relative">
-          <button onclick="toggleNotiDropdown()" class="relative p-1.5 text-slate-500 dark:text-slate-300 hover:text-yruPink focus:outline-none">
-            <i class="fa-solid fa-bell text-lg"></i>
+          <button onclick="toggleNotiDropdown()" class="relative p-1.5 text-slate-500 dark:text-slate-300 hover:text-yruPink focus:outline-none rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+            <i class="fa-solid fa-bell text-base sm:text-lg"></i>
             <span id="notiBadge" class="hidden absolute top-0 right-0 bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full min-w-[16px] text-center border-2 border-white dark:border-slate-800">0</span>
           </button>
 
-          <div id="notiDropdown" class="hidden absolute right-0 mt-2 w-72 md:w-80 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 z-50 overflow-hidden">
+          <!-- Notification Dropdown Responsive -->
+          <div id="notiDropdown" class="hidden absolute right-[-4rem] sm:right-0 mt-2 w-[calc(100vw-2rem)] max-w-xs sm:w-80 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 z-50 overflow-hidden">
             <div class="p-3 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-700">
               <h3 class="font-bold text-xs text-slate-800 dark:text-slate-100">การแจ้งเตือน</h3>
               <span class="text-[10px] text-yruPink font-semibold">ล่าสุด</span>
@@ -65,13 +73,13 @@
         </div>
 
         <div id="navUserArea">
-          <button onclick="scrollToLogin()" class="bg-yruPink hover:bg-yruPinkHover text-white px-4 py-1.5 rounded-md text-sm font-medium transition shadow-sm">
+          <button onclick="scrollToLogin()" class="bg-yruPink hover:bg-yruPinkHover text-white px-3 sm:px-4 py-1.5 rounded-md text-xs sm:text-sm font-medium transition shadow-sm">
             เข้าสู่ระบบ
           </button>
         </div>
 
-        <button id="navLogoutBtn" onclick="logout()" class="hidden p-2 text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-700 rounded-full transition focus:outline-none" title="ออกจากระบบ">
-          <i class="fa-solid fa-right-from-bracket text-lg"></i>
+        <button id="navLogoutBtn" onclick="logout()" class="hidden p-1.5 sm:p-2 text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-700 rounded-full transition focus:outline-none" title="ออกจากระบบ">
+          <i class="fa-solid fa-right-from-bracket text-base sm:text-lg"></i>
         </button>
 
       </div>
@@ -81,16 +89,16 @@
 
   <!-- Sidebar Overlay & Menu -->
   <div id="sidebarBackdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/40 z-40 hidden transition-opacity"></div>
-  <aside id="sidebar" class="fixed top-0 left-0 w-72 h-full bg-white dark:bg-slate-800 z-50 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between overflow-y-auto">
+  <aside id="sidebar" class="fixed top-0 left-0 w-72 max-w-[85vw] h-full bg-white dark:bg-slate-800 z-50 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between overflow-y-auto">
     <div>
       <div class="p-4 flex justify-between items-center border-b border-slate-100 dark:border-slate-700">
         
         <!-- Sidebar University Logo Container -->
         <div id="sidebarLogoContainer" class="flex items-center gap-2">
-          <div class="w-10 h-10 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-sm border border-amber-400">
+          <div class="w-9 h-9 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-sm border border-amber-400">
             <i class="fa-solid fa-graduation-cap"></i>
           </div>
-          <span class="font-bold text-2xl text-yruPink tracking-wide">SMC-YRU</span>
+          <span class="font-bold text-xl sm:text-2xl text-yruPink tracking-wide">SMC-YRU</span>
         </div>
 
         <button onclick="toggleSidebar()" class="text-yruPink text-xl hover:text-slate-400 p-1">
@@ -117,44 +125,44 @@
   </aside>
 
   <!-- Main View Area -->
-  <main class="flex-1 max-w-4xl mx-auto w-full p-4 my-4">
+  <main class="flex-1 max-w-4xl mx-auto w-full px-3 sm:px-4 py-4 my-2 sm:my-4">
 
     <!-- Login View -->
-    <div id="loginView" class="max-w-md mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden border border-slate-200 dark:border-slate-700">
-      <div class="bg-yruPink text-white px-5 py-3.5 flex items-center gap-2">
-        <i class="fa-solid fa-right-to-bracket text-base"></i>
-        <h2 class="font-medium text-sm md:text-base">กรุณาป้อนรหัสประจำตัวและชื่อ-นามสกุล</h2>
+    <div id="loginView" class="w-full max-w-md mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden border border-slate-200 dark:border-slate-700">
+      <div class="bg-yruPink text-white px-4 sm:px-5 py-3 sm:py-3.5 flex items-center gap-2">
+        <i class="fa-solid fa-right-to-bracket text-sm sm:text-base"></i>
+        <h2 class="font-medium text-xs sm:text-sm md:text-base">กรุณาป้อนรหัสประจำตัวและชื่อ-นามสกุล</h2>
       </div>
 
-      <div class="p-6 space-y-4">
+      <div class="p-4 sm:p-6 space-y-4">
         <div>
           <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">รหัสประจำตัว</label>
-          <input type="text" id="loginUserId" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 dark:bg-slate-700 rounded-lg text-sm focus:outline-none focus:border-yruPink" placeholder="เช่น 6601001">
+          <input type="text" id="loginUserId" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 dark:bg-slate-700 rounded-lg text-xs sm:text-sm focus:outline-none focus:border-yruPink" placeholder="เช่น 6601001">
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">ชื่อ - นามสกุล</label>
-          <input type="text" id="loginFullName" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 dark:bg-slate-700 rounded-lg text-sm focus:outline-none focus:border-yruPink" placeholder="เช่น สมชาย ใจดี">
+          <input type="text" id="loginFullName" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 dark:bg-slate-700 rounded-lg text-xs sm:text-sm focus:outline-none focus:border-yruPink" placeholder="เช่น สมชาย ใจดี">
         </div>
 
-        <button onclick="handleLogin()" class="bg-yruPink hover:bg-yruPinkHover text-white font-medium text-sm px-6 py-2 rounded-md transition shadow-sm">
+        <button onclick="handleLogin()" class="w-full sm:w-auto bg-yruPink hover:bg-yruPinkHover text-white font-medium text-xs sm:text-sm px-6 py-2.5 sm:py-2 rounded-lg transition shadow-sm">
           เข้าสู่ระบบ
         </button>
       </div>
     </div>
 
     <!-- Dashboard View -->
-    <div id="dashboardView" class="hidden space-y-6">
+    <div id="dashboardView" class="hidden space-y-4 sm:space-y-6">
 
       <!-- Admin Panel -->
-      <div id="adminPanel" class="hidden space-y-6">
+      <div id="adminPanel" class="hidden space-y-4 sm:space-y-6">
         
         <!-- Quick Notification Sender Box -->
-        <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
-          <h2 class="text-sm font-bold text-yruPink flex items-center gap-2">
+        <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
+          <h2 class="text-xs sm:text-sm font-bold text-yruPink flex items-center gap-2">
             <i class="fa-solid fa-paper-plane"></i> ส่งการแจ้งเตือนด่วน
           </h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             <div>
               <label class="block text-xs font-semibold mb-1">รูปแบบการส่ง</label>
               <select id="sendTargetType" class="w-full p-2 border dark:bg-slate-700 rounded-lg text-xs" onchange="toggleTargetInput()">
@@ -170,10 +178,10 @@
           </div>
           <input type="text" id="sendNotiTitle" class="w-full p-2 border dark:bg-slate-700 rounded-lg text-xs font-bold" placeholder="หัวข้อแจ้งเตือน">
           <textarea id="sendNotiMessage" rows="2" class="w-full p-2 border dark:bg-slate-700 rounded-lg text-xs" placeholder="รายละเอียดข้อความ..."></textarea>
-          <button onclick="submitNotification()" class="bg-yruPink hover:bg-yruPinkHover text-white text-xs font-bold px-4 py-2 rounded-md shadow-sm">ส่งการแจ้งเตือน</button>
+          <button onclick="submitNotification()" class="w-full sm:w-auto bg-yruPink hover:bg-yruPinkHover text-white text-xs font-bold px-4 py-2 rounded-md shadow-sm">ส่งการแจ้งเตือน</button>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
           <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 text-center space-y-2">
             <h3 class="font-bold text-xs text-slate-800 dark:text-slate-100"><i class="fa-solid fa-users text-yruPink"></i> จัดการผู้ใช้งาน (Users)</h3>
             <button onclick="openUsersCRUDModal()" class="w-full bg-yruPink text-white text-xs font-bold py-2 rounded-lg hover:bg-yruPinkHover">เปิดตาราง CRUD</button>
@@ -194,31 +202,31 @@
 
       <!-- Service Menu Section -->
       <section id="serviceMenuSection" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-        <button onclick="toggleMenuDrawer()" class="w-full p-4 flex justify-between items-center text-left focus:outline-none bg-slate-50 dark:bg-slate-700/50">
-          <h2 class="text-sm font-bold text-yruPink flex items-center gap-2">
+        <button onclick="toggleMenuDrawer()" class="w-full p-3.5 sm:p-4 flex justify-between items-center text-left focus:outline-none bg-slate-50 dark:bg-slate-700/50">
+          <h2 class="text-xs sm:text-sm font-bold text-yruPink flex items-center gap-2">
             <i class="fa-solid fa-grip"></i> เมนูบริการระบบ
           </h2>
           <i id="menuDrawerIcon" class="fa-solid fa-chevron-up text-xs text-slate-400 transition-transform"></i>
         </button>
-        <div id="menuDrawerContent" class="p-5 border-t border-slate-100 dark:border-slate-700">
-          <div id="dynamicMenuGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+        <div id="menuDrawerContent" class="p-3.5 sm:p-5 border-t border-slate-100 dark:border-slate-700">
+          <div id="dynamicMenuGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-4"></div>
         </div>
       </section>
 
       <!-- News Feed Section -->
-      <section class="space-y-4">
-        <div class="flex justify-between items-center">
-          <div class="flex space-x-2 overflow-x-auto pb-1">
-            <button onclick="filterNews('ทั้งหมด')" class="cat-btn active bg-yruPink text-white px-3 py-1 rounded-full text-xs font-semibold">ทั้งหมด</button>
-            <button onclick="filterNews('ข่าวประกาศ')" class="cat-btn bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-full text-xs font-semibold hover:bg-slate-100">ข่าวประกาศ</button>
-            <button onclick="filterNews('กิจกรรม')" class="cat-btn bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-full text-xs font-semibold hover:bg-slate-100">กิจกรรม</button>
+      <section class="space-y-3 sm:space-y-4">
+        <div class="flex justify-between items-center gap-2">
+          <div class="flex space-x-1.5 sm:space-x-2 overflow-x-auto pb-1 text-xs">
+            <button onclick="filterNews('ทั้งหมด')" class="cat-btn active bg-yruPink text-white px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap">ทั้งหมด</button>
+            <button onclick="filterNews('ข่าวประกาศ')" class="cat-btn bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-full text-xs font-semibold hover:bg-slate-100 whitespace-nowrap">ข่าวประกาศ</button>
+            <button onclick="filterNews('กิจกรรม')" class="cat-btn bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-full text-xs font-semibold hover:bg-slate-100 whitespace-nowrap">กิจกรรม</button>
           </div>
-          <button onclick="openCreatePostModal()" class="bg-yruPink hover:bg-yruPinkHover text-white text-xs font-bold px-3.5 py-1.5 rounded-full shadow-sm flex items-center gap-1.5">
-            <i class="fa-solid fa-plus"></i> โพสต์ข่าว
+          <button onclick="openCreatePostModal()" class="bg-yruPink hover:bg-yruPinkHover text-white text-xs font-bold px-3 sm:px-3.5 py-1.5 rounded-full shadow-sm flex items-center gap-1.5 shrink-0">
+            <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">โพสต์ข่าว</span>
           </button>
         </div>
 
-        <div id="newsFeed" class="space-y-4"></div>
+        <div id="newsFeed" class="space-y-3 sm:space-y-4"></div>
       </section>
 
     </div>
@@ -226,9 +234,9 @@
   </main>
 
   <!-- Footer -->
-  <footer class="p-4 text-xs text-slate-400 max-w-4xl mx-auto w-full flex justify-between items-center">
-    <span>copyright @ 2026 <strong class="text-yruPink font-semibold">Shakir Title Asha</strong></span>
-    <span id="lastUpdateLabel" class="text-[10px]">Last Update: --/--/---- --:--</span>
+  <footer class="p-3 sm:p-4 text-[11px] sm:text-xs text-slate-400 max-w-4xl mx-auto w-full flex justify-between items-center gap-2 border-t border-slate-200/50 dark:border-slate-800 mt-4">
+    <span class="truncate">copyright @ 2026 <strong class="text-yruPink font-semibold">Shakir Title Asha</strong></span>
+    <span id="lastUpdateLabel" class="text-[9px] sm:text-[10px] shrink-0">Last Update: --/--/---- --:--</span>
   </footer>
 
   <script>
@@ -261,14 +269,14 @@
       if (LOGO_URL && LOGO_URL.trim() !== "") {
         if (headerContainer) {
           headerContainer.innerHTML = `
-            <img src="${LOGO_URL}" alt="YRU Logo" class="w-8 h-8 object-contain rounded-full border border-amber-400 shadow-sm" onerror="fallbackLogo(this, 'header')" />
-            <span class="font-bold text-xl text-yruPink tracking-tight">YRU</span>
+            <img src="${LOGO_URL}" alt="Logo" class="w-7 h-7 sm:w-8 sm:h-8 object-contain rounded-full border border-amber-400 shadow-sm" onerror="fallbackLogo(this, 'header')" />
+            <span class="font-bold text-lg sm:text-xl text-yruPink tracking-tight truncate">SMC-YRU</span>
           `;
         }
         if (sidebarContainer) {
           sidebarContainer.innerHTML = `
-            <img src="${LOGO_URL}" alt="YRU Logo" class="w-10 h-10 object-contain rounded-full border border-amber-400" onerror="fallbackLogo(this, 'sidebar')" />
-            <span class="font-bold text-2xl text-yruPink tracking-wide">YRU</span>
+            <img src="${LOGO_URL}" alt="Logo" class="w-9 h-9 sm:w-10 sm:h-10 object-contain rounded-full border border-amber-400" onerror="fallbackLogo(this, 'sidebar')" />
+            <span class="font-bold text-xl sm:text-2xl text-yruPink tracking-wide">SMC-YRU</span>
           `;
         }
       } else {
@@ -281,17 +289,17 @@
       if (!parent) return;
       if (type === 'header') {
         parent.innerHTML = `
-          <div class="w-8 h-8 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-xs border border-amber-400 shadow-sm">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-xs border border-amber-400 shadow-sm shrink-0">
             <i class="fa-solid fa-graduation-cap"></i>
           </div>
-          <span class="font-bold text-xl text-yruPink tracking-tight">YRU</span>
+          <span class="font-bold text-lg sm:text-xl text-yruPink tracking-tight truncate">SMC-YRU</span>
         `;
       } else {
         parent.innerHTML = `
-          <div class="w-10 h-10 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-sm border border-amber-400">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-sm border border-amber-400 shrink-0">
             <i class="fa-solid fa-graduation-cap"></i>
           </div>
-          <span class="font-bold text-2xl text-yruPink tracking-wide">YRU</span>
+          <span class="font-bold text-xl sm:text-2xl text-yruPink tracking-wide">SMC-YRU</span>
         `;
       }
     }
@@ -299,18 +307,18 @@
     function showDefaultIconLogo(headerContainer, sidebarContainer) {
       if (headerContainer) {
         headerContainer.innerHTML = `
-          <div class="w-8 h-8 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-xs border border-amber-400 shadow-sm">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-xs border border-amber-400 shadow-sm shrink-0">
             <i class="fa-solid fa-graduation-cap"></i>
           </div>
-          <span class="font-bold text-xl text-yruPink tracking-tight">YRU</span>
+          <span class="font-bold text-lg sm:text-xl text-yruPink tracking-tight truncate">SMC-YRU</span>
         `;
       }
       if (sidebarContainer) {
         sidebarContainer.innerHTML = `
-          <div class="w-10 h-10 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-sm border border-amber-400">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-emerald-700 text-amber-300 flex items-center justify-center font-bold text-sm border border-amber-400 shrink-0">
             <i class="fa-solid fa-graduation-cap"></i>
           </div>
-          <span class="font-bold text-2xl text-yruPink tracking-wide">YRU</span>
+          <span class="font-bold text-xl sm:text-2xl text-yruPink tracking-wide">SMC-YRU</span>
         `;
       }
     }
@@ -427,9 +435,9 @@
     function renderUserHeader() {
       const avatarSrc = currentUser.avatar || DEFAULT_AVATAR;
       document.getElementById("navUserArea").innerHTML = `
-        <button onclick="openUserProfileModal()" class="flex items-center gap-2 bg-pink-50 dark:bg-slate-700 hover:bg-pink-100 p-1.5 pr-3 rounded-full transition border border-pink-200 dark:border-slate-600">
-          <img src="${avatarSrc}" class="w-7 h-7 rounded-full object-cover border border-yruPink" />
-          <span class="text-xs font-bold text-yruPink">${currentUser.name}</span>
+        <button onclick="openUserProfileModal()" class="flex items-center gap-1.5 sm:gap-2 bg-pink-50 dark:bg-slate-700 hover:bg-pink-100 p-1 sm:p-1.5 pr-2.5 sm:pr-3 rounded-full transition border border-pink-200 dark:border-slate-600">
+          <img src="${avatarSrc}" class="w-6 h-6 sm:w-7 sm:h-7 rounded-full object-cover border border-yruPink shrink-0" />
+          <span class="text-xs font-bold text-yruPink max-w-[100px] sm:max-w-[140px] truncate">${currentUser.name}</span>
         </button>
       `;
     }
@@ -442,8 +450,8 @@
         html: `
           <div class="space-y-3 text-left text-xs">
             <div class="text-center">
-              <img id="profilePreviewImg" src="${avatarSrc}" class="w-24 h-24 rounded-full object-cover mx-auto mb-2 border-2 border-yruPink shadow" />
-              <input type="file" id="editAvatarFile" accept="image/*" onchange="previewImage(this, 'profilePreviewImg')" class="text-[11px] text-slate-500">
+              <img id="profilePreviewImg" src="${avatarSrc}" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover mx-auto mb-2 border-2 border-yruPink shadow" />
+              <input type="file" id="editAvatarFile" accept="image/*" onchange="previewImage(this, 'profilePreviewImg')" class="text-[11px] text-slate-500 w-full">
             </div>
             <div>
               <label class="font-semibold text-slate-600 dark:text-slate-300">รหัสประจำตัว</label>
@@ -463,6 +471,7 @@
         confirmButtonText: "บันทึกข้อมูล",
         confirmButtonColor: "#E66695",
         cancelButtonText: "ยกเลิก",
+        customClass: { popup: 'w-[95%] max-w-sm rounded-xl' },
         preConfirm: async () => {
           const newName = document.getElementById("editFullName").value.trim();
           const newPhone = document.getElementById("editPhone").value.trim();
@@ -554,11 +563,11 @@
       }
 
       return `
-        <button onclick="openMenuUrl('${url}', ${isDirect}, '${name}', '${openMode}')" class="flex flex-col items-center p-3 bg-slate-50 dark:bg-slate-700/50 hover:bg-pink-50 border border-slate-200 dark:border-slate-600 hover:border-yruPink rounded-xl transition group text-center w-full">
-          <div class="w-10 h-10 rounded-lg bg-pink-100 text-yruPink flex items-center justify-center text-lg mb-1.5 group-hover:bg-yruPink group-hover:text-white transition">
+        <button onclick="openMenuUrl('${url}', ${isDirect}, '${name}', '${openMode}')" class="flex flex-col items-center p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-700/50 hover:bg-pink-50 border border-slate-200 dark:border-slate-600 hover:border-yruPink rounded-xl transition group text-center w-full">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-pink-100 text-yruPink flex items-center justify-center text-base sm:text-lg mb-1.5 group-hover:bg-yruPink group-hover:text-white transition shrink-0">
             <i class="${menu.icon || 'fa-solid fa-link'}"></i>
           </div>
-          <span class="font-bold text-xs text-slate-700 dark:text-slate-200 group-hover:text-yruPink">${menu.name}</span>
+          <span class="font-bold text-xs text-slate-700 dark:text-slate-200 group-hover:text-yruPink line-clamp-2">${menu.name}</span>
         </button>
       `;
     }
@@ -573,11 +582,11 @@
       if (openMode === 'MODAL') {
         Swal.fire({
           title: name,
-          html: `<iframe src="${link}" class="w-full h-[75vh] border-0 rounded-lg"></iframe>`,
-          width: '90%',
+          html: `<iframe src="${link}" class="w-full h-[70vh] sm:h-[75vh] border-0 rounded-lg"></iframe>`,
+          width: '95%',
           showCloseButton: true,
           showConfirmButton: false,
-          customClass: { popup: 'p-2 md:p-4' }
+          customClass: { popup: 'p-2 sm:p-4 max-w-4xl' }
         });
       } else {
         window.open(link, '_blank');
@@ -618,21 +627,21 @@
         const postAvatar = post.authorAvatar || DEFAULT_AVATAR;
 
         return `
-          <div id="postCard_${post.postId}" class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
+          <div id="postCard_${post.postId}" class="bg-white dark:bg-slate-800 p-3.5 sm:p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
            
-            <div class="flex justify-between items-center">
-              <div class="flex items-center gap-2.5">
-                <img src="${postAvatar}" class="w-9 h-9 rounded-full object-cover border border-yruPink" />
+            <div class="flex justify-between items-center gap-2">
+              <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
+                <img src="${postAvatar}" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border border-yruPink shrink-0" />
                 <div>
                   <h4 class="font-bold text-slate-800 dark:text-slate-100 text-xs">${post.authorName}</h4>
-                  <p class="text-[10px] text-slate-400">${post.createdAt}</p>
+                  <p class="text-[9px] sm:text-[10px] text-slate-400">${post.createdAt}</p>
                 </div>
               </div>
-              <div class="flex items-center gap-2">
-                <span class="bg-pink-100 text-yruPink text-[10px] px-2.5 py-0.5 rounded-full font-bold">${post.category}</span>
+              <div class="flex items-center gap-1.5 sm:gap-2">
+                <span class="bg-pink-100 text-yruPink text-[9px] sm:text-[10px] px-2 sm:px-2.5 py-0.5 rounded-full font-bold whitespace-nowrap">${post.category}</span>
                 ${canManage ? `
-                  <button onclick="editPostModal('${post.postId}')" class="text-xs text-slate-400 hover:text-yruPink"><i class="fa-solid fa-pen-to-square"></i></button>
-                  <button onclick="deletePostConfirm('${post.postId}')" class="text-xs text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash-can"></i></button>
+                  <button onclick="editPostModal('${post.postId}')" class="text-xs text-slate-400 hover:text-yruPink p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                  <button onclick="deletePostConfirm('${post.postId}')" class="text-xs text-slate-400 hover:text-rose-500 p-1"><i class="fa-solid fa-trash-can"></i></button>
                 ` : ''}
               </div>
             </div>
@@ -640,7 +649,7 @@
             <p class="text-xs text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed">${formatTextWithLinks(post.content)}</p>
 
             ${post.imageUrl ? `
-              <img src="${post.imageUrl}" onclick="openImageModal('${post.imageUrl}')" class="w-full h-auto rounded-xl border max-h-96 object-cover cursor-pointer hover:opacity-95 transition" />
+              <img src="${post.imageUrl}" onclick="openImageModal('${post.imageUrl}')" class="w-full h-auto rounded-lg sm:rounded-xl border max-h-64 sm:max-h-96 object-cover cursor-pointer hover:opacity-95 transition" />
             ` : ''}
            
             <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
@@ -657,15 +666,15 @@
 
             <div class="space-y-2 pt-2">
               <div class="flex gap-2 items-center">
-                <img src="${currentUser.avatar || DEFAULT_AVATAR}" class="w-7 h-7 rounded-full object-cover border" />
-                <input type="text" id="commentInput_${post.postId}" class="flex-1 p-2 text-xs border dark:bg-slate-700 dark:border-slate-600 rounded-lg focus:outline-none focus:border-yruPink" placeholder="เขียนความคิดเห็น...">
-                <label class="cursor-pointer text-slate-400 hover:text-yruPink px-1">
-                  <i class="fa-solid fa-image text-base"></i>
+                <img src="${currentUser.avatar || DEFAULT_AVATAR}" class="w-6 h-6 sm:w-7 sm:h-7 rounded-full object-cover border shrink-0" />
+                <input type="text" id="commentInput_${post.postId}" class="flex-1 min-w-0 p-1.5 sm:p-2 text-xs border dark:bg-slate-700 dark:border-slate-600 rounded-lg focus:outline-none focus:border-yruPink" placeholder="เขียนความคิดเห็น...">
+                <label class="cursor-pointer text-slate-400 hover:text-yruPink p-1 shrink-0">
+                  <i class="fa-solid fa-image text-sm sm:text-base"></i>
                   <input type="file" id="commentImg_${post.postId}" accept="image/*" onchange="previewImage(this, 'commentImgPreview_${post.postId}')" class="hidden">
                 </label>
-                <button onclick="smoothSubmitComment('${post.postId}')" class="bg-yruPink hover:bg-yruPinkHover text-white text-xs px-3 py-1.5 rounded-lg font-bold transition">ส่ง</button>
+                <button onclick="smoothSubmitComment('${post.postId}')" class="bg-yruPink hover:bg-yruPinkHover text-white text-xs px-2.5 sm:px-3 py-1.5 rounded-lg font-bold transition shrink-0">ส่ง</button>
               </div>
-              <img id="commentImgPreview_${post.postId}" class="hidden w-16 h-16 object-cover rounded-lg border border-yruPink ml-9" />
+              <img id="commentImgPreview_${post.postId}" class="hidden w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg border border-yruPink ml-8 sm:ml-9" />
             </div>
 
           </div>
@@ -685,16 +694,16 @@
         const commentAvatar = c.authorAvatar || DEFAULT_AVATAR;
 
         return `
-          <div class="text-xs ${parentId ? 'ml-8 mt-2' : ''} flex gap-2 items-start">
-            <img src="${commentAvatar}" class="w-6 h-6 rounded-full object-cover border border-yruPink mt-1" />
-            <div class="flex-1 space-y-1">
-              <div class="bg-slate-100 dark:bg-slate-700/60 p-2.5 rounded-2xl inline-block max-w-full">
-                <strong class="text-yruPink font-bold block text-[11px]">${c.authorName}</strong>
-                <span class="text-slate-700 dark:text-slate-200 whitespace-pre-line">${formatTextWithLinks(c.text)}</span>
-                ${c.imageUrl ? `<img src="${c.imageUrl}" onclick="openImageModal('${c.imageUrl}')" class="w-32 h-32 object-cover rounded-lg border mt-1 cursor-pointer" />` : ''}
+          <div class="text-xs ${parentId ? 'ml-4 sm:ml-8 mt-2' : ''} flex gap-1.5 sm:gap-2 items-start">
+            <img src="${commentAvatar}" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full object-cover border border-yruPink mt-1 shrink-0" />
+            <div class="flex-1 min-w-0 space-y-1">
+              <div class="bg-slate-100 dark:bg-slate-700/60 p-2 sm:p-2.5 rounded-2xl inline-block max-w-full">
+                <strong class="text-yruPink font-bold block text-[10px] sm:text-[11px]">${c.authorName}</strong>
+                <span class="text-slate-700 dark:text-slate-200 whitespace-pre-line break-words text-[11px] sm:text-xs">${formatTextWithLinks(c.text)}</span>
+                ${c.imageUrl ? `<img src="${c.imageUrl}" onclick="openImageModal('${c.imageUrl}')" class="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-lg border mt-1 cursor-pointer" />` : ''}
               </div>
 
-              <div class="flex items-center gap-3 text-[10px] text-slate-400 pl-2">
+              <div class="flex items-center gap-2 sm:gap-3 text-[9px] sm:text-[10px] text-slate-400 pl-1.5 sm:pl-2">
                 <span>${c.time}</span>
                 <button onclick="smoothToggleLikeComment('${post.postId}', '${c.commentId}')" class="${isLiked ? 'text-rose-500 font-bold' : 'hover:text-rose-500'}">
                   ถูกใจ ${(c.likes || []).length > 0 ? `(${c.likes.length})` : ''}
@@ -711,9 +720,9 @@
                 ` : ''}
               </div>
 
-              <div id="replyBox_${c.commentId}" class="hidden flex gap-2 items-center pt-1 pl-2">
-                <input type="text" id="replyInput_${c.commentId}" class="flex-1 p-1 text-[11px] border rounded focus:outline-none focus:border-yruPink dark:bg-slate-700" placeholder="ตอบกลับ ${c.authorName}...">
-                <button onclick="smoothSubmitComment('${post.postId}', '${c.commentId}')" class="bg-yruPink text-white text-[10px] px-2.5 py-1 rounded font-bold">ส่ง</button>
+              <div id="replyBox_${c.commentId}" class="hidden flex gap-1.5 sm:gap-2 items-center pt-1 pl-1.5 sm:pl-2">
+                <input type="text" id="replyInput_${c.commentId}" class="flex-1 min-w-0 p-1 text-[11px] border rounded focus:outline-none focus:border-yruPink dark:bg-slate-700" placeholder="ตอบกลับ ${c.authorName}...">
+                <button onclick="smoothSubmitComment('${post.postId}', '${c.commentId}')" class="bg-yruPink text-white text-[10px] px-2 py-1 rounded font-bold shrink-0">ส่ง</button>
               </div>
 
               ${renderCommentsTree(post, c.commentId)}
@@ -819,6 +828,7 @@
         confirmButtonText: "บันทึก",
         confirmButtonColor: "#E66695",
         cancelButtonText: "ยกเลิก",
+        customClass: { popup: 'w-[95%] max-w-sm rounded-xl' },
         preConfirm: async (newText) => {
           const text = newText.trim();
           if (!text) return Swal.showValidationMessage("กรุณากรอกข้อความ");
@@ -892,13 +902,14 @@
             <div>
               <label class="block font-semibold mb-1">แนบรูปภาพ</label>
               <input type="file" id="modalPostImage" accept="image/*" onchange="previewImage(this, 'postImgPreview')" class="w-full text-xs">
-              <img id="postImgPreview" class="hidden mt-2 w-full max-h-48 object-cover rounded-lg border" />
+              <img id="postImgPreview" class="hidden mt-2 w-full max-h-40 object-cover rounded-lg border" />
             </div>
           </div>
         `,
         showCancelButton: true,
         confirmButtonText: "โพสต์",
         confirmButtonColor: "#E66695",
+        customClass: { popup: 'w-[95%] max-w-md rounded-xl' },
         preConfirm: async () => {
           const content = document.getElementById("modalPostContent").value.trim();
           if (!content) return Swal.showValidationMessage("กรุณากรอกข้อความ");
@@ -948,6 +959,7 @@
         showCancelButton: true,
         confirmButtonText: "บันทึก",
         confirmButtonColor: "#E66695",
+        customClass: { popup: 'w-[95%] max-w-md rounded-xl' },
         preConfirm: async () => {
           const content = document.getElementById("editPostContent").value.trim();
           const category = document.getElementById("editPostCategory").value;
@@ -982,7 +994,7 @@
           <td class="p-2">${u[3]}</td>
           <td class="p-2 font-semibold text-yruPink">${u[4]}</td>
           <td class="p-2"><img src="${u[5]||DEFAULT_AVATAR}" class="w-6 h-6 rounded-full object-cover" /></td>
-          <td class="p-2">
+          <td class="p-2 whitespace-nowrap">
             <button onclick="editUserPrompt('${u[0]}', '${u[1]}', '${u[2]}', '${u[3]}', '${u[4]}', '${u[5]||''}')" class="text-blue-500 font-bold mr-2">แก้ไข</button>
             <button onclick="deleteUserConfirm('${u[0]}')" class="text-rose-500 font-bold">ลบ</button>
           </td>
@@ -995,14 +1007,14 @@
           <div class="text-right mb-3">
             <button onclick="editUserPrompt('', '', '', 'Active', 'STUDENT', '')" class="bg-emerald-600 text-white text-xs px-3 py-1.5 rounded font-bold">+ เพิ่มผู้ใช้งาน</button>
           </div>
-          <div class="max-h-80 overflow-y-auto">
-            <table class="w-full">
+          <div class="max-h-80 overflow-y-auto overflow-x-auto">
+            <table class="w-full min-w-[500px]">
               <thead><tr class="bg-slate-100 dark:bg-slate-700 text-xs text-left"><th class="p-2">ID</th><th class="p-2">ชื่อ</th><th class="p-2">เบอร์</th><th class="p-2">สถานะ</th><th class="p-2">Role</th><th class="p-2">Avatar</th><th class="p-2">จัดการ</th></tr></thead>
               <tbody>${rowsHtml}</tbody>
             </table>
           </div>
         `,
-        width: '90%', showConfirmButton: false, showCloseButton: true
+        width: '95%', customClass: { popup: 'max-w-4xl rounded-xl' }, showConfirmButton: false, showCloseButton: true
       });
     }
 
@@ -1026,6 +1038,7 @@
           </div>
         `,
         showCancelButton: true,
+        customClass: { popup: 'w-[95%] max-w-sm rounded-xl' },
         preConfirm: async () => {
           const userData = [
             document.getElementById("uId").value.trim(),
@@ -1062,7 +1075,7 @@
           <td class="p-2">${m[4]}</td>
           <td class="p-2">${m[5]}</td>
           <td class="p-2">${m[6]}</td>
-          <td class="p-2">
+          <td class="p-2 whitespace-nowrap">
             <button onclick="editMenuPrompt('${m[0]}', '${m[1]}', '${m[2]}', '${m[3]}', '${m[4]}', '${m[5]}', '${m[6]}')" class="text-blue-500 font-bold mr-2">แก้ไข</button>
             <button onclick="deleteMenuConfirm('${m[0]}')" class="text-rose-500 font-bold">ลบ</button>
           </td>
@@ -1075,14 +1088,14 @@
           <div class="text-right mb-3">
             <button onclick="editMenuPrompt('M'+new Date().getTime(), '', 'fa-solid fa-link', '', 'TRUE', 'ALL', 'TAB')" class="bg-emerald-600 text-white text-xs px-3 py-1.5 rounded font-bold">+ เพิ่มเมนู</button>
           </div>
-          <div class="max-h-80 overflow-y-auto">
-            <table class="w-full">
+          <div class="max-h-80 overflow-y-auto overflow-x-auto">
+            <table class="w-full min-w-[650px]">
               <thead><tr class="bg-slate-100 dark:bg-slate-700 text-xs text-left"><th class="p-2">ID</th><th class="p-2">ชื่อ</th><th class="p-2">Icon</th><th class="p-2">URL</th><th class="p-2">Direct</th><th class="p-2">Role</th><th class="p-2">OpenMode</th><th class="p-2">จัดการ</th></tr></thead>
               <tbody>${rowsHtml}</tbody>
             </table>
           </div>
         `,
-        width: '95%', showConfirmButton: false, showCloseButton: true
+        width: '95%', customClass: { popup: 'max-w-4xl rounded-xl' }, showConfirmButton: false, showCloseButton: true
       });
     }
 
@@ -1101,6 +1114,7 @@
           </div>
         `,
         showCancelButton: true,
+        customClass: { popup: 'w-[95%] max-w-sm rounded-xl' },
         preConfirm: async () => {
           const menuData = [
             document.getElementById("mId").value.trim(),
@@ -1134,8 +1148,8 @@
           <td class="p-2 font-bold">${p.authorName}</td>
           <td class="p-2 max-w-xs truncate">${p.content}</td>
           <td class="p-2"><span class="bg-pink-100 text-yruPink px-2 py-0.5 rounded">${p.category}</span></td>
-          <td class="p-2">${p.createdAt}</td>
-          <td class="p-2">
+          <td class="p-2 whitespace-nowrap">${p.createdAt}</td>
+          <td class="p-2 whitespace-nowrap">
             <button onclick="adminDeletePost('${p.postId}')" class="text-rose-500 font-bold">ลบโพสต์</button>
           </td>
         </tr>
@@ -1144,14 +1158,14 @@
       Swal.fire({
         title: "ตารางตรวจสอบและลบโพสต์",
         html: `
-          <div class="max-h-80 overflow-y-auto">
-            <table class="w-full">
+          <div class="max-h-80 overflow-y-auto overflow-x-auto">
+            <table class="w-full min-w-[500px]">
               <thead><tr class="bg-slate-100 dark:bg-slate-700 text-xs text-left"><th class="p-2">ผู้โพสต์</th><th class="p-2">ข้อความ</th><th class="p-2">หมวดหมู่</th><th class="p-2">เวลา</th><th class="p-2">จัดการ</th></tr></thead>
               <tbody>${rowsHtml}</tbody>
             </table>
           </div>
         `,
-        width: '85%', showConfirmButton: false, showCloseButton: true
+        width: '95%', customClass: { popup: 'max-w-4xl rounded-xl' }, showConfirmButton: false, showCloseButton: true
       });
     }
 
@@ -1187,11 +1201,11 @@
           } else {
             list.innerHTML = data.notifications.map(item => `
               <div onclick="openNotiFullModal('${item.notiId}', '${encodeURIComponent(item.title)}', '${encodeURIComponent(item.message)}', '${item.createdAt}', ${item.isRead})" class="p-3 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition flex items-start gap-2.5 ${item.isRead ? 'opacity-50' : 'bg-pink-50/40'}">
-                <span class="w-2 h-2 rounded-full mt-1.5 inline-block ${item.isRead ? 'bg-transparent' : 'bg-yruPink'}"></span>
-                <div class="flex-1">
-                  <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100">${item.title}</h4>
+                <span class="w-2 h-2 rounded-full mt-1.5 inline-block shrink-0 ${item.isRead ? 'bg-transparent' : 'bg-yruPink'}"></span>
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">${item.title}</h4>
                   <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5 line-clamp-1">${item.message}</p>
-                  <span class="text-[10px] text-slate-400 mt-1 block">${item.createdAt}</span>
+                  <span class="text-[9px] sm:text-[10px] text-slate-400 mt-1 block">${item.createdAt}</span>
                 </div>
               </div>
             `).join('');
@@ -1212,15 +1226,16 @@
       }
 
       Swal.fire({
-        title: `<span class="text-yruPink font-bold text-base">${title}</span>`,
+        title: `<span class="text-yruPink font-bold text-sm sm:text-base">${title}</span>`,
         html: `
           <div class="text-left text-xs space-y-3">
             <p class="text-slate-400 text-[10px]">เวลาส่ง: ${time}</p>
-            <div class="p-3 bg-slate-50 dark:bg-slate-700 rounded-lg text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed">${message}</div>
+            <div class="p-3 bg-slate-50 dark:bg-slate-700 rounded-lg text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed text-xs">${message}</div>
           </div>
         `,
         confirmButtonText: "ปิดหน้าต่าง",
-        confirmButtonColor: "#E66695"
+        confirmButtonColor: "#E66695",
+        customClass: { popup: 'w-[95%] max-w-sm rounded-xl' }
       });
     }
 
